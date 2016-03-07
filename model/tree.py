@@ -9,6 +9,12 @@ class Nodo:
     def get_hijos(self):
         return self.hijos
 
+    def set_hijos(self, hijos):
+        self.hijos = hijos
+        if self.hijos != None:
+            for h in self.hijos:
+                h.padre = self
+
     def get_padre(self):
         self.padre
 
@@ -28,7 +34,6 @@ class Nodo:
         return self.coste
 
     def igual(self, nodo):
-
         if self.get_datos() == nodo.get_datos():
             return True
         else:
@@ -38,8 +43,6 @@ class Nodo:
         en_la_lista = False
         for n in lista_nodos:
             if self.igual(n):
-                return en_la_lista
-            else:
                 en_la_lista = True
         return en_la_lista
 
