@@ -17,7 +17,7 @@ def buscar_solucion_BFS(estado_inicial, solucion):
         if nodo.get_datos() == solucion:
             # solucion encontrada
             solucionado = True
-            return nodo
+            #return nodo
         else:
             # expandir nodos hijo
             dato_nodo = nodo.get_datos()
@@ -41,21 +41,15 @@ def buscar_solucion_BFS(estado_inicial, solucion):
                 nodos_frontera.append(hijo_derecho)
 
             nodo.set_hijos([hijo_izquierdo, hijo_central, hijo_derecho])
-    return nodo
+    return nodos_visitados
 
 if __name__ == '__main__':
 
     estado_inicial = [4, 2, 3, 1]
     solucion = [1, 2, 3, 4]
     nodo_solucion = buscar_solucion_BFS(estado_inicial, solucion)
-
     # mostrar resultado
-    resultado = []
-    nodo = nodo_solucion
+    for i in nodo_solucion:
+        print(i)
+    print(nodo_solucion)
 
-    while nodo.get_padre() != None:
-        resultado.append(nodo.get_datos)
-        nodo = nodo.get_padre()
-    resultado.append(estado_inicial)
-    resultado.reverse()
-    print(resultado)
