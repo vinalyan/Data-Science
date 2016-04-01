@@ -6,6 +6,7 @@
 [Introduction](#introduction)
 | [Machine Learning applications](#machine-learning)
 | [Busquedas](#busquedas)
+| [References](#Referencias)
 
 ---
 
@@ -18,3 +19,7 @@ My projects about applications of artificial intelligence to solve problems
 
 
 ##  Busquedas ##
+
+##  References ##
+
+Serrano, A. G. (2013). Inteligencia artificial: fundamentos, práctica y aplicaciones. Alfaomega.
