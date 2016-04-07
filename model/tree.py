@@ -16,7 +16,7 @@ class Nodo:
                 h.padre = self
 
     def get_padre(self):
-        self.padre
+        return self.padre
 
     def set_padre(self, padre):
         self.padre = padre
