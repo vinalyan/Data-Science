@@ -23,7 +23,7 @@ My projects about applications of artificial intelligence to solve problems
 
 ## Docker & TensorFlow ##
 
-- Docker Commands - 
+# Docker Commands #
 
 run docker image
 docker run -it b.gcr.io/tensorflow/tensorflow
