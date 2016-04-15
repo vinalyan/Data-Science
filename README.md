@@ -5,7 +5,8 @@
 
 [Introduction](#introduction)
 | [Machine Learning applications](#machine-learning)
-| [Busquedas](#busquedas)
+| [Busquedas](#Busquedas)
+| [Docker & TensorFlow](#Docker & TensorFlow)
 | [References](#Referencias)
 
 ---
@@ -18,7 +19,15 @@ My projects about applications of artificial intelligence to solve problems
 ## Machine Learning applications ##
 
 
-##  Busquedas ##
+## Busquedas ##
+
+## Docker & TensorFlow ##
+
+- Docker Commands - 
+
+run docker image
+docker run -it b.gcr.io/tensorflow/tensorflow
+
 
 ##  References ##
 
