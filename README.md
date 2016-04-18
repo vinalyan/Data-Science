@@ -25,8 +25,13 @@ My projects about applications of artificial intelligence to solve problems
 
 # Docker Commands #
 
-run docker image
+docker run
+
 docker run -it b.gcr.io/tensorflow/tensorflow
+
+find ip VM Docker Machine
+
+docker-machine ip default
 
 
 ##  References ##
