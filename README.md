@@ -37,3 +37,4 @@ docker-machine ip default
 ##  References ##
 
 Serrano, A. G. (2013). Inteligencia artificial: fundamentos, práctica y aplicaciones. Alfaomega.
+Udacity, Deep Learning
