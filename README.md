@@ -25,6 +25,10 @@ My projects about applications of artificial intelligence to solve problems
 
 # Docker Commands #
 
+docker builds image
+
+docker build - < Dockerfile
+
 docker run
 
 docker run -it b.gcr.io/tensorflow/tensorflow
@@ -37,4 +41,5 @@ docker-machine ip default
 ##  References ##
 
 Serrano, A. G. (2013). Inteligencia artificial: fundamentos, práctica y aplicaciones. Alfaomega.
-Udacity, Deep Learning
+
+Udacity, Deep Learning.
