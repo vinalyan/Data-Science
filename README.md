@@ -31,7 +31,7 @@ docker build - < Dockerfile
 
 docker run
 
-docker run -it b.gcr.io/tensorflow/tensorflow
+docker run -p 8888:8888 -it --rm b.gcr.io/tensorflow/tensorflow
 
 find ip VM Docker Machine
 
