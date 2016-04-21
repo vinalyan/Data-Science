@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-""" 
+"""
     A general tool for converting data from the
     dictionary format to an (n x k) python list that's 
     ready for training an sklearn algorithm
@@ -29,7 +29,6 @@
     label is the _first_ item in feature_list--very important
     that poi is listed first!
 """
-
 
 import numpy as np
 

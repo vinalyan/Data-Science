@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+#udacity example
 """ 
     This is the code to accompany the Lesson 1 (Naive Bayes) mini-project. 
 
@@ -9,6 +9,7 @@
     Sara has label 0
     Chris has label 1
 """
+
     
 import sys
 
@@ -20,6 +21,7 @@ from Machine_learning.Udacity.tools.email_preprocess import preprocess
 ### and testing datasets, respectively
 ### labels_train and labels_test are the corresponding item labels
 features_train, features_test, labels_train, labels_test = preprocess()
+
 
 
 
