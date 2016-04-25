@@ -13,7 +13,7 @@
 
 ## Introduction ##
 
-My projects about applications of artificial intelligence to solve problems
+My projects about applications of artificial intelligence to solve problems ☣
 
 
 ## Machine Learning applications ##
