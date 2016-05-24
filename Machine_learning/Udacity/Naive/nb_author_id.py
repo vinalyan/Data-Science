@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#python 2.7
 #udacity example
 """ 
     This is the code to accompany the Lesson 1 (Naive Bayes) mini-project. 
@@ -12,10 +13,10 @@
 
     
 import sys
-
+from sklearn.naive_bayes import GaussianNB
 sys.path.append("../tools/")
-from Machine_learning.Udacity.tools.email_preprocess import preprocess
-
+from email_preprocess import preprocess
+from time import time
 
 ### features_train and features_test are the features for the training
 ### and testing datasets, respectively
@@ -23,12 +24,18 @@ from Machine_learning.Udacity.tools.email_preprocess import preprocess
 features_train, features_test, labels_train, labels_test = preprocess()
 
 
-
-
-
 #########################################################
 ### your code goes here ###
+gnb = GaussianNB()
 
+t0 = time()
+clf = gnb.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+t1 = time()
+accuracy = clf.score(features_test, labels_test)
+print "predict time:", round(time()-t1, 3), "s"
+print accuracy
 
 #########################################################
 
