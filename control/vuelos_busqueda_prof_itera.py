@@ -1,13 +1,15 @@
 # Vuelos con busqueda con profundidad iterativa
 
 from model.tree import Nodo
+
+
 def DFS_prof_iter(nodo, solucion):
     for limite in range(0,100):
         visitados=[]
         sol = buscar_solucion_DFS_Rec(nodo, solucion, visitados, limite)
         if sol != None:
-           return None
-        return sol
+           return sol
+
 
 def buscar_solucion_DFS_Rec(nodo, solucion, visitados, limite):
     if limite > 0:
@@ -22,6 +24,7 @@ def buscar_solucion_DFS_Rec(nodo, solucion, visitados, limite):
                 hijo = Nodo(un_hijo)
                 if not hijo.en_lista(visitados):
                     lista_hijos.append(hijo)
+
             nodo.set_hijos(lista_hijos)
 
             for nodo_hijo in nodo.get_hijos():
@@ -35,16 +38,16 @@ def buscar_solucion_DFS_Rec(nodo, solucion, visitados, limite):
 
 if __name__=="__main__":
     conexiones = {
-    'Malaga': {'Salamanca', 'Madrid', 'Barcelona'},
-    'Sevilla': {'Santiago', 'Madrid'},
-    'Granada': {'valencia'},
-    'Madrid':{'Salamanca','Sevilla', 'Malaga', 'Barcelona', 'Santander'},
-    'Barcelona':{'Santander'},
-    'Salamanca':{'Malaga', 'Madrid'},
-    'Santiago':{'Sevilla','Santander','Barcelona'},
-    'Santander':{'Santiago', 'Madrid'},
-    'Zaragoza':{'Barcelona'},
-    'Barcelona':{'Zaragoza','Santiago','Madrid','Malaga','Valencia'}
+        'Malaga': {'Salamanca', 'Madrid', 'Barcelona'},
+        'Sevilla': {'Santiago', 'Madrid'},
+        'Granada': {'Valencia'},
+        'Valencia': {'Barcelona'},
+        'Madrid': {'Salamanca', 'Sevilla', 'Malaga', 'Barcelona', 'Santander'},
+        'Salamanca': {'Malaga', 'Madrid'},
+        'Santiago': {'Sevilla', 'Santander', 'Barcelona'},
+        'Santander': {'Santiago', 'Madrid'},
+        'Zaragoza': {'Barcelona'},
+        'Barcelona': {'Zaragoza', 'Santiago', 'Madrid', 'Malaga', 'Valencia'}
     }
     estado_inicial = 'Malaga'
     solucion = 'Santiago'

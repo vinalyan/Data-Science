@@ -30,16 +30,16 @@ def buscar_solucion_BFS(conexiones, estado_inicial, solucion):
 
 if __name__ =="__main__":
     conexiones = {
-    'Malaga': {'Salamanca', 'Madrid', 'Barcelona'},
-    'Sevilla': {'Santiago', 'Madrid'},
-    'Granada': {'valencia'},
-    'Madrid':{'Salamanca','Sevilla', 'Malaga', 'Barcelona', 'Santander'},
-    'Barcelona':{'Santander'},
-    'Salamanca':{'Malaga', 'Madrid'},
-    'Santiago':{'Sevilla','Santander','Barcelona'},
-    'Santander':{'Santiago', 'Madrid'},
-    'Zaragoza':{'Barcelona'},
-    'Barcelona':{'Zaragoza','Santiago','Madrid','Malaga','Valencia'}
+        'Malaga': {'Salamanca', 'Madrid', 'Barcelona'},
+        'Sevilla': {'Santiago', 'Madrid'},
+        'Granada': {'Valencia'},
+        'Valencia': {'Barcelona'},
+        'Madrid': {'Salamanca', 'Sevilla', 'Malaga', 'Barcelona', 'Santander'},
+        'Salamanca': {'Malaga', 'Madrid'},
+        'Santiago': {'Sevilla', 'Santander', 'Barcelona'},
+        'Santander': {'Santiago', 'Madrid'},
+        'Zaragoza': {'Barcelona'},
+        'Barcelona': {'Zaragoza', 'Santiago', 'Madrid', 'Malaga', 'Valencia'}
     }
     estado_inicial = 'Malaga'
     solucion = 'Santiago'
