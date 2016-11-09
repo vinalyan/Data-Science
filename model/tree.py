@@ -6,6 +6,9 @@ class Nodo:
         self.coste = None
         self.set_hijos(hijos)
 
+    def compara(x, y):
+        return x.get_coste() - y.get_coste()
+
     def get_hijos(self):
         return self.hijos
 
