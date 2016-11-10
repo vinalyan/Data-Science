@@ -18,4 +18,25 @@ def buscar_solucion_UCS (conexiones, estado_inicial, solucion):
             # solución encontrada
             solucionado = True
             return nodo
+        else:
+            # expandir nodos hijo (ciudades con conexión)
+            dato_nodo = nodo.get_datos()
+            lista_hijos = []
+            for un_hijo in conexiones[dato_nodo]:
+                hijo = Nodo(un_hijo)
+                coste = conexiones[dato_nodo][un_hijo]
+                hijo.set_coste(nodo.get_coste() + coste)
+                lista_hijos.append(hijo)
+                if not hijo.en_lista(nodos_visitados):
+                    # si está en la lista lo suistituimos con el nuevo valor de coste si es menor
+                    if hijo.en_lista(nodos_frontera):
+                        for n in nodos_frontera:
+                            if n.igual(hijo) and n.get_coste() > hijo.get_coste():
+                                nodos_frontera.remove(n)
+                                nodos_frontera.append(hijo)
+                            else:
+                                nodos_frontera.append(hijo)
+                                nodo.set_hijos(lista_hijos)
+
+
 
