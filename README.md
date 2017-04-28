@@ -4,7 +4,7 @@
 **Table of Contents**
 
 [Introduction](#introduction)
-| [Machine Learning applications](#machine-learning)
+| [Machine-learning](#machine-learning)
 | [Busquedas](#Busquedas)
 | [Docker & TensorFlow](#Docker & TensorFlow)
 | [References](#Referencias)
@@ -16,7 +16,7 @@
 My projects about applications of artificial intelligence to solve problems ☣
 
 
-## Machine Learning applications ##
+## Machine-learning ##
 
 
 ## Busquedas ##
