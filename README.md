@@ -17,7 +17,7 @@ My projects about applications of artificial intelligence to solve problems ☣
 
 
 ## Machine Learning ##
-This folder has some projects related with the application of machine learning algorithms, some of them have been taking from some courses, such as Udacity and Coursera. Moreover, it has some codes to resolve some Kaggle competitions. 
+This folder has some projects related with the application of machine learning algorithms, some of them have been taken from some courses, such as Udacity and Coursera. Moreover, it has some codes to resolve some Kaggle competitions. 
 
 In this you can find  since the application of Bagging algorithms until the use of Deep Learning algorithms. 
 
