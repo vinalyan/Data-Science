@@ -16,7 +16,7 @@
 My projects about applications of artificial intelligence to solve problems ☣
 
 
-## Python ##
+## Machine Learning ##
 This folder has some projects and examples about Data Science , some of them were taken from some courses, 
 such as Udacity and Coursera. Moreover, it has some codes to resolve some Kaggle competitions. 
 
@@ -26,7 +26,8 @@ on the other hand, it has some presentations that I used in some classes related
 
 ## Artificial Intelligence 
 
-This folder is focused to cover 
+This folder is focused to cover other areas from artificial intelligence, for example genetic programming 
+and expert systems
 
 ## Busquedas ##
 
