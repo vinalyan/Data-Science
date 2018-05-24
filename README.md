@@ -27,7 +27,7 @@ on the other hand, it has some presentations that I used in some classes related
 ## Artificial Intelligence 
 
 This folder is focused to cover other areas from artificial intelligence, for example genetic programming 
-and expert systems
+and expert systems.
 
 ## Busquedas ##
 
