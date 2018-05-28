@@ -17,6 +17,7 @@ My projects about applications of artificial intelligence to solve problems ☣
 
 
 ## Machine Learning ##
+
 This folder has some projects and examples about Data Science , some of them were taken from some courses, 
 such as Udacity and Coursera. Moreover, it has some codes to resolve some Kaggle competitions. 
 
@@ -29,32 +30,19 @@ on the other hand, it has some presentations that I used in some classes related
 This folder is focused to cover other areas from artificial intelligence, for example genetic programming 
 and expert systems.
 
-## Busquedas ##
-
-## Docker & TensorFlow ##
-
-# Docker Commands #
-
-docker builds image
-
-docker build - < Dockerfile
-
-docker run
-
-docker run -p 8888:8888 -it --rm b.gcr.io/tensorflow/tensorflow
-
-find ip VM Docker Machine
-
-docker-machine ip default
+## Exploratory Data Analysis
+This folder has some examples about the process to data mining, data visualization techniques through some 
+examples and projects.
 
 
 ##  References ##
 
-Serrano, A. G. (2013). Inteligencia artificial: fundamentos, práctica y aplicaciones. Alfaomega.
-
-Udacity, Deep Learning.
-
-Udacity, Introduction to Machine Learning
++ Serrano, A. G. (2013). Inteligencia artificial: fundamentos, práctica y aplicaciones. Alfaomega.
++ Raschka, S. (2015). Python machine learning. Packt Publishing Ltd.
++ Wickham, H., & Grolemund, G. (2016). R for Data Science.
++ Udacity, Deep Learning.
++ Deep Learning Specialization. Deep Learning.ai, Coursera.
++ Udacity, Introduction to Machine Learning
 
 ```
                                          |
