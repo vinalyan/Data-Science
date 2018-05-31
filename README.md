@@ -43,6 +43,7 @@ examples and projects.
 + Udacity, Deep Learning.
 + Deep Learning Specialization. Deep Learning.ai, Coursera.
 + Udacity, Introduction to Machine Learning
++ VanderPlas, J. (2016). Python data science handbook: Essential tools for working with data. " O'Reilly Media, Inc.".
 
 ```
                                          |
