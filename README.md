@@ -6,7 +6,6 @@
 [Introduction](#introduction)
 | [Machine-learning](#machine-learning)
 | [Busquedas](#Busquedas)
-| [Docker & TensorFlow](#Docker & TensorFlow)
 | [References](#Referencias)
 
 ---
