@@ -65,11 +65,13 @@ R utiliza el símbolo __<-__ para detonar una asignación, a diferencia del típico
 x <- rnorm(5)
 ```
 
-Por favor escriba el anterior ejemplo y ejecutelo en el próximo espacio:
+Por favor escriba el anterior ejemplo y ejecutelo en el próximo espacio.
+
+_Ejercicio 1_
 ```{r example1}
 ## Escriba el ejemplo en el siguiente espacio (1 línea de código) ##
 x <- rnorm(5)
-##
+# --------------------------- #
 x
 
 ```
@@ -88,11 +90,11 @@ Como hemos mencionado, la aplicación de la función rnorm nos dio un vector de ci
 vector <- c(1,4,5,6)
 
 ```
-
+_Ejercicio 2_
 ```{R example2}
 # Digite el ejemplo del vector en el siguiente espacio (1 línea de código)
 vector <- c(1,4,5,6)
-##
+# --------------------------- #
 vector
 
 ```
@@ -105,11 +107,13 @@ Por favor, cree dos vectores para las columnas __Age (mo.)__ y __Weight (kg.)__.
 
 ![](../Utilities/R/table.png)
 
+_Ejercicio 3_
+
 ```{R example3}
 # Por favor escriba los dos vectores en el siguiente espacio (2 lineas de código)
 age <- c(01,03,5,2,11,9,3,9,12,3)
 weight <- c(4.4,5.3,7.2,5.2,8.5,7.3,6.0,10.4,10.2,6.1)
-#
+# --------------------------- #
 print("Vector de Age")
 age
 print("Vector de Weight")
@@ -144,13 +148,15 @@ library(gclus)
 Para este siguiente ejercicio escriba las lineas de código que permitan instalar los paquetes "tidyverse" y "nycflights13", luego cargue ambos al entorno de trabajo.
 
 Es probable que el paquete ya se encuentre instalado. 
+
+_Ejercicio 4_
 ```{R example4}
 # Escriba el código que permita instalar y cargar los dos paquetes (cuatro líneas)
 #install.packages("tidyverse")
 library("tidyverse")
 #install.packages("nycflights13")
 library("nycflights13")
-#
+# --------------------------- #
 
 ```
 
@@ -161,10 +167,12 @@ Cada paquete trae consigo una serie de funciones y la única forma de acceder a e
 nombre_funcion(parametro1 = valor1, parametro2 = valor2, ...)
 ```
 Para nuestro próximo ejercicio utilizaremos la función _seq_, por favor utilice la opción de ayuda en la consola y luego en el siguiente cuadro de código digite una línea que utilice la función para crear un vector de valores del 1 hasta el 10.
+
+_Ejercicio 5_
 ```{R example5}
 # Escriba el código que utilice la funcion seq y cree un vector de valores del 1 hasta el 10 (1 línea de código)
 vector <- seq(1,10)
-#
+# --------------------------- #
 vector
 
 ```
@@ -181,10 +189,13 @@ flights
 
 Con la finalidad que podamos tener una primera idea de nuestros datos, vamos a utilizar la función str, en primer lugar, escriba la ayuda de _?str_ y obtenga más información de esta.
 
-Ahora digite la función str sobre el objeto flights
+Ahora digite la función str sobre el objeto flights.
+
+_Ejercicio 6_
 ```{R example6}
 # Escriba el código que utilice la funcion str en el objeto flights (1 línea de código)
 str(flights)
+# --------------------------- #
 ```
 
 + ¿Que puede inferir a través de la anterior función?
@@ -201,11 +212,134 @@ Ahora, también podemos ver la información de nuestro data.frame como si fuera un
 View(flights)
 ```
 
-##Base de datos 
+Vamos a utilizar otras funciones y operaciones en R que nos permitan filtrar y hacer operaciones en los datos. A continuación, se muestra una tabla con la lista de operaciones tanto aritméticas como lógicas que se pueden realizar entre los objetos de R.
+
+
+![](../Utilities/R/operations.png)
+
+Hagamos unas operaciones básicas, nosotros podemos utilizar R como una especie de "calculadora"" (muy parecido a la operación entre celdas en Excel). En el siguiente cuadro de código hay unas variables númericas con valores ya asignados con el fin que usted pueda realizar las siguientes operaciones:
+
++ x + y 
++ x * y 
++ -x
++ sqrt(x)
++ x == y
++ x != y
+
+_Ejercicio 7_
+
+```{R example7}
+#Ejecute las siguientes tres líneas de código para crear las variables 
+x = c(1, 2, 4, 7, 9, 0)
+y = 4
+z = c(0.5, 2, 3, 5, 1, 0)
+
+# Escriba en el siguiente espacio la operación suma entre "x" y "y", y asígnelo a resultado_suma (1 línea de código)
+resultado_suma <- x + y
+# Escriba en el siguiente espacio la operación multiplicación entre "x" y "z", y asígnelo a resultado_multiplicacion (1 línea de código)
+resultado_multiplicacion <- x * y
+# Escriba en el siguiente espacio la operación multiplicación negativa a "z", y asígnelo a resultado_negativo (1 línea de código)
+resultado_negativo <- -z
+# Escriba en el siguiente espacio la operación de raíz cuadrada "y", y asígnelo a resultado_raiz (1 línea de código)
+resultado_raiz <- sqrt(y)
+# Escriba en el siguiente espacio la operación lógica de igualdad entre "x" y "z", y asígnelo a resultado_igualdad (1 línea de código)
+resultado_igualdad <- x == z
+# Escriba en el siguiente espacio la operación lógica de diferencia entre "x" y "y", y asígnelo a resultado_igualdad (1 línea de código)
+resultado_diferencia <- x != y
+
+# --------------------------- #
+  
+# Ahora ejecute las siguientes líneas de código que le permitirán observar los resultados de sus operaciones.  
+
+print("Resultado Suma")
+resultado_suma
+print("Resultado multiplicación")
+resultado_multiplicacion
+print("Resultado negativo")
+resultado_negativo
+print("Resultado raíz cuadrada")
+resultado_raiz
+print("Resultado de operación lógica: igualdad")
+resultado_igualdad
+print("Resultado de operación lógica: diferencia")
+resultado_diferencia
+```
+
+Ahora, exploremos la función _filter()_, esta función nos permite obtener un subconjunto de un observaciones de un conjunto más grande basado en los parámetros que le suministremos, vea el siguiente ejemplo. 
+
+```
+filter(flights,  carrier == "UA")
+```
+
+La anterior línea de código nos permite obtener todos los vuelos realizados por una sola aerolínea (para nuestro caso aquella abreviada con "UA").
+
+En la siguiente tabla puede observar la sintaxis para las operaciones lógicas en R.
+
+
+![](../Utilities/R/logical.png)
+
+
+Nosotros podemos realizar varias operaciones lógicas enlazadas entre sí, por ejemplo:
+
+
+```
+filter(flights,  carrier == "B6" & distance <= 1500)
+```
+
+La anterior línea de código nos da los vuelos realizados en el año 2014 y que tuvieron una distancia hasta 1500 millas.
+
+Ahora, le proponemos como ejercicio obtener el subconjunto de datos de los vuelos de la aerolinea "AA" que tuvieron una distancia entre 1300 y 1800 millas.
+
+
+_Ejercicio 8_
+
+```{R example8}
+# Escriba en el siguiente espacio el filtro que permita obtener el subconjunto de vuelos (1 línea de código)
+filter(flights, carrier== "AA" & (distance >= 1300 || distance <= 1800))
+# --------------------------- #
+```
+
+##Cargar archivos y bases de datos
+
+R tienen la capacidad de cargar conjuntos de información en distintos formatos a nuestro entorno de trabajo. En el siguiente ejemplo veremos distintas formas de cargar archivos .csv y de otro tipo a través de comandos y del mismo RStudio, es muy importante conocer previamente el formato del archivo antes de cargarlo (por ejemplo, si los datos vienen separados por ";", "," y " ").
+
+_Cargar archivos con RStudio_
+
+En la sección de "environment"" podemos encontrar una opción "import Dataset" que nos abrirá unas opciones cargar los archivos los distintos tipos de archivos. 
+
+
+![](../Utilities/R/import_dataset.png)
+
+El anterior proceso es simplemente una abstracción de unos pasos que podemos realizar también a través de código en R, debemos tener cuidado con el separador, el tipo de archivo y conocer cuál es la función para cargarlo. A continuación, veremos cómo llamar a la función que nos permitirá abrir el buscador de archivos de nuestro sistema operativo.
+
+```
+file.choose()
+```
+Existen distintas funciones para cargar los archivos, por ejemplo:
+
++ read.csv. Carga un archivo csv con separador ","
++ read.csv2. Carga un archivo csv con separador ";" 
++ read.delim. Carga un archivo con separador "\t"
+
+Ahora, podemos integrar la función que nos da la opción para buscar el archivo en nuestro sistema y luego la encargada de cargarlo en nuestro entorno de trabajo. 
+```
+read.csv2(file.choose())
+```
+Para el siguiente ejercicio cargue el archivo "parks.csv" y asignelo a una variable "df".
+
+_Ejercicio 9_
+
+```{R example9}
+# Escriba en el siguiente espacio el código que permita cargar el archivo parks.csv (1 línea de código)
+df <- read.csv(file.choose())
+# --------------------------- #
+```
+
+###Base de datos 
 
 Debido a la amplia gama de tecnologías de base de datos y a la importancia de procesar la mayor cantidad de información; es importante conocer los mecanismos (interfaces) con los cuales podamos integrar los distintos sistemas de información con R, ya que será el medio con el que podremos consultar y procesar los datos que serán luego utilizados en las actividades de la ciencia de datos.
 
-###MySQL
+####MySQL
 
 ![](../Utilities/mysql.jpg)
 
@@ -272,3 +406,7 @@ dbDisconnect(storiesDb )
 ```
 
 <h2>Referencias</h2>
+
++ Kabacoff, R. (2015). R IN ACTION: Data analysis and graphics with R
++ Wickham, H., & Grolemund, G. (2016). R for Data Science.
+
