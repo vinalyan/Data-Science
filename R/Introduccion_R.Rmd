@@ -143,7 +143,7 @@ update.packages()
 
 Para cargar el paquete que necesitamos utilizar en nuestro entorno de trabajo debe utilizar el siguiente comando en conjunto con el nombre del paquete
 ```
-library(gclus) 
+library("gclus") 
 ```
 Para este siguiente ejercicio escriba las lineas de código que permitan instalar los paquetes "tidyverse" y "nycflights13", luego cargue ambos al entorno de trabajo.
 
