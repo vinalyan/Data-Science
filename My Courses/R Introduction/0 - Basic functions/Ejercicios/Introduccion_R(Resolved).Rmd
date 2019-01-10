@@ -90,6 +90,20 @@ Como hemos mencionado, la aplicación de la función rnorm nos dio un vector de ci
 vector <- c(1,4,5,6)
 
 ```
+_Ejemplos Scatter plots_
+```{R scatter_plot_example1}
+demo(persp)
+demo(image)
+demo(glm.vr)
+```
+
+
+Es recomendable establecer la dirección del directorio de trabajo, este proceso podemos ejecutarlo a través de la opción que se encuentra en _Session_ en RStudio. También, podemos establecer este conjunto de actividades desde líneas de código, por ejemplo:
++ Podemos conocer el actual directorio con la función  ```getwd()```
++ Para cambiar el directorio actual a través de la función ```setwd()``` ingresándole por parámetro la ruta del directorio.
+
+
+
 _Ejercicio 2_
 ```{R example2}
 # Digite el ejemplo del vector en el siguiente espacio (1 línea de código)
