@@ -186,7 +186,7 @@ $(document).ready(function () {
 x &lt;- rnorm(5)
 # --------------------------- #
 x</code></pre>
-<pre><code>## [1]  0.18511638 -0.31705433 -0.06734785  0.99382804 -0.13535467</code></pre>
+<pre><code>## [1] -2.21433445  1.43515937  0.03988986 -0.84955047  1.00368932</code></pre>
 <p>Los comentarios sobre el código podemos agregarlos con <em>#</em>.</p>
 <p>Ahora, si deseamos obtener mayor información sobre una función podemos utilizar la opción de ayuda con R a través de <em>?</em>, ejecute el siguiente ejemplo en su consola.</p>
 <p><em>Ejercicio 2</em> Consulte la ayuda a través de R estudio para entender en qué consiste el paquete “base” de R. ¿Qué ofrece el paquete, explore su contenido?</p>
@@ -719,12 +719,12 @@ print(&quot;Vector de Age&quot;)</code></pre>
 <pre class="r"><code># Escriba el código que permita instalar y cargar los dos paquetes (cuatro líneas)
 #install.packages(&quot;tidyverse&quot;)
 library(&quot;tidyverse&quot;)</code></pre>
-<pre><code>## -- Attaching packages -------------------------------------------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## -- Attaching packages ----------------------------------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
 <pre><code>## v ggplot2 3.0.0     v purrr   0.2.5
 ## v tibble  1.4.2     v dplyr   0.7.6
 ## v tidyr   0.8.1     v stringr 1.3.1
 ## v readr   1.1.1     v forcats 0.3.0</code></pre>
-<pre><code>## -- Conflicts ----------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+<pre><code>## -- Conflicts -------------------------------------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>#install.packages(&quot;nycflights13&quot;)
@@ -785,7 +785,63 @@ a &lt;-c(&quot;k&quot;, &quot;j&quot;, &quot;h&quot;, &quot;a&quot;, &quot;c&quo
 <p>R1/</p>
 <p>R2/</p>
 <p>R3/</p>
-<p>Vamos a utilizar un conjunto de datos ( <strong>dataset</strong> ) de los vuelos realizados en la ciudad de Nueva York en 2013. Vamos a ejecutar el siguiente código que nos permitirá ver nuestro data.frame</p>
+<p><em>Ejemplo de matriz</em></p>
+<p>Son arreglos de dos dimensiones con todos los registros del mismo tipo, ejecute el siguiente código con el fin de observar las diferencias contra un vector de una dimensión</p>
+<pre class="r"><code>x &lt;- matrix(1:20, nrow=5, ncol=4)
+x</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    6   11   16
+## [2,]    2    7   12   17
+## [3,]    3    8   13   18
+## [4,]    4    9   14   19
+## [5,]    5   10   15   20</code></pre>
+<pre class="r"><code>print(&quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;&quot;</code></pre>
+<pre class="r"><code>class(x)</code></pre>
+<pre><code>## [1] &quot;matrix&quot;</code></pre>
+<p>Observe como fue el proceso de ingreso de los datos, realice los cambios necesarios con el fin que el ingreso de los datos sea por filas.</p>
+<p><em>Ejercicio 9</em></p>
+<pre class="r"><code># 2 lineas de código
+x &lt;- matrix(1:20, nrow=5, ncol=4, byrow = TRUE)
+x</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    2    3    4
+## [2,]    5    6    7    8
+## [3,]    9   10   11   12
+## [4,]   13   14   15   16
+## [5,]   17   18   19   20</code></pre>
+<pre class="r"><code># -------------------------</code></pre>
+<p>Ahora veamos como obtener los elementos de la matriz, para accederlos escribimos los indices(número) de la siguiente forma [fila, columna]</p>
+<pre class="r"><code>x[ , 2] #obtenemos los elementos de la segunda columna</code></pre>
+<pre><code>## [1]  2  6 10 14 18</code></pre>
+<pre class="r"><code>x[1, ] #obtenemos los elementos de la primera fila</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>x[5 , 3] #obtenemos el elemento ubicado en la quinta fila y tercera columna </code></pre>
+<pre><code>## [1] 19</code></pre>
+<p>La función <em>row.names()</em> nos permite asignar nombres a las filas de la matriz, ejecute el siguiente código y observe el resultado.</p>
+<pre class="r"><code># 2 lineas de código
+names &lt;- c(&quot;R1&quot;, &quot;R2&quot;, &quot;R3&quot;, &quot;R4&quot;, &quot;R5&quot;)
+row.names(x) &lt;- names 
+x</code></pre>
+<pre><code>##    [,1] [,2] [,3] [,4]
+## R1    1    2    3    4
+## R2    5    6    7    8
+## R3    9   10   11   12
+## R4   13   14   15   16
+## R5   17   18   19   20</code></pre>
+<pre class="r"><code># ----------</code></pre>
+<p>Los nombres actúan como etiquetas, específicamente, es una opción para reemplazar los índices.</p>
+<pre class="r"><code>x[&quot;R4&quot;,] </code></pre>
+<pre><code>## [1] 13 14 15 16</code></pre>
+<p>De la misma forma que en las filas, podemos encontrar la función para las columnas <em>colnames</em>.</p>
+<p>Existe un tipo de objeto conocido como Factor en donde sus valores son categóricos, específicamente, nominales u ordinales.</p>
+<pre class="r"><code>diabetes &lt;- c(&quot;Type1&quot;, &quot;Type2&quot;, &quot;Type1&quot;, &quot;Type1&quot;)
+diabetesFactor &lt;- factor(diabetes) </code></pre>
+<p>Cree el siguiente factor y observe el orden de los niveles</p>
+<pre class="r"><code>x &lt;- factor(c(&quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;))</code></pre>
+<p>Para cambiar el orden de los niveles se especifica el parámetro “levels” en el orden deseado</p>
+<pre class="r"><code>x &lt;- factor(c(&quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;), levels = c(&quot;yes&quot;, &quot;no&quot;))</code></pre>
+<p>Vamos a utilizar un conjunto de datos ( <strong>dataset</strong> ) de los vuelos realizados en la ciudad de Nueva York en 2013. Ejecutemos el siguiente código que nos permitirá ver nuestro data.frame</p>
 <pre class="r"><code># La siguiente línea de código especifica que vamos a utilizar &quot;flights&quot; del paquete nycflights13, el uso de :: se realiza con la finalidad que no se presenten problemas si hay más variables &quot;flights&quot; en nuestro entorno de trabajo.
 nycflights13::flights</code></pre>
 <pre><code>## # A tibble: 336,776 x 19

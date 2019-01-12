@@ -342,7 +342,74 @@ R2/
 
 R3/
 
-Vamos a utilizar un conjunto de datos ( __dataset__ ) de los vuelos realizados en la ciudad de Nueva York en 2013. Vamos a ejecutar el siguiente código que nos permitirá ver nuestro data.frame 
+_Ejemplo de matriz_
+
+Son arreglos de dos dimensiones con todos los registros del mismo tipo, ejecute el siguiente código con el fin de observar las diferencias contra un vector de una dimensión
+
+```{R matrizExample}
+x <- matrix(1:20, nrow=5, ncol=4)
+x
+print("")
+class(x)
+```
+
+Observe como fue el proceso de ingreso de los datos, realice los cambios necesarios con el fin que el ingreso de los datos sea por filas. 
+
+_Ejercicio 9_
+```{R matrizExample2}
+# 2 lineas de código
+x <- matrix(1:20, nrow=5, ncol=4, byrow = TRUE)
+x
+# -------------------------
+```
+
+
+Ahora veamos como obtener los elementos de la matriz, para accederlos escribimos los indices(número) de la siguiente forma [fila, columna]
+
+```{R matrizExample3}
+x[ , 2] #obtenemos los elementos de la segunda columna
+x[1, ] #obtenemos los elementos de la primera fila
+x[5 , 3] #obtenemos el elemento ubicado en la quinta fila y tercera columna 
+```
+
+
+La función _row.names()_ nos permite asignar nombres a las filas de la matriz, ejecute el siguiente código y observe el resultado.
+
+```{R matrizExample4}
+# 2 lineas de código
+names <- c("R1", "R2", "R3", "R4", "R5")
+row.names(x) <- names 
+x
+# ----------
+```
+Los nombres actúan como etiquetas, específicamente, es una opción para reemplazar los índices. 
+
+```{R matrizExample5}
+x["R4",] 
+```
+
+De la misma forma que en las filas, podemos encontrar la función para las columnas _colnames_.
+
+Existe un tipo de objeto conocido como Factor en donde sus valores son categóricos, específicamente, nominales u ordinales. 
+
+
+```{R factorExample1}
+diabetes <- c("Type1", "Type2", "Type1", "Type1")
+diabetesFactor <- factor(diabetes) 
+```
+
+Cree el siguiente factor y observe el orden de los niveles
+
+```{R factorExample2}
+x <- factor(c("yes", "yes", "no", "yes", "no"))
+```
+
+Para cambiar el orden de los niveles se especifica el parámetro "levels" en el orden deseado
+```{R factorExample3}
+x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
+```
+
+Vamos a utilizar un conjunto de datos ( __dataset__ ) de los vuelos realizados en la ciudad de Nueva York en 2013. Ejecutemos el siguiente código que nos permitirá ver nuestro data.frame 
 
 ```{R provided}
 # La siguiente línea de código especifica que vamos a utilizar "flights" del paquete nycflights13, el uso de :: se realiza con la finalidad que no se presenten problemas si hay más variables "flights" en nuestro entorno de trabajo.
@@ -496,7 +563,6 @@ _Ejercicio 12_
 df <- read.csv(file.choose())
 # --------------------------- #
 ```
-
 
 
 <h2>Referencias</h2>
