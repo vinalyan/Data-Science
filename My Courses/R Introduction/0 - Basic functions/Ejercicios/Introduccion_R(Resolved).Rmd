@@ -320,6 +320,8 @@ pairList(lista)
 ##Creando un dataset y exploración básica de datos
 
 
+###Vector
+
 Ahora observemos como recorrer un vector
 _Ejercicio 8_
 
@@ -342,9 +344,11 @@ R2/
 
 R3/
 
-_Ejemplo de matriz_
+###Matriz
 
-Son arreglos de dos dimensiones con todos los registros del mismo tipo, ejecute el siguiente código con el fin de observar las diferencias contra un vector de una dimensión
+Son arreglos de dos dimensiones en donde todos los registros son del mismo tipo, ejecute el siguiente código con el fin de observar las diferencias con el vector de una dimensión
+
+_Ejemplo de matriz_
 
 ```{R matrizExample}
 x <- matrix(1:20, nrow=5, ncol=4)
@@ -364,7 +368,7 @@ x
 ```
 
 
-Ahora veamos como obtener los elementos de la matriz, para accederlos escribimos los indices(número) de la siguiente forma [fila, columna]
+Ahora veamos como obtener los elementos de la matriz, para accederlos escribimos los indices(número) de la siguiente forma X[_i_,_j_]$ donde _i_ corresponde al indice de la fila y _j_ al indice de las columnas.
 
 ```{R matrizExample3}
 x[ , 2] #obtenemos los elementos de la segunda columna
@@ -390,6 +394,27 @@ x["R4",]
 
 De la misma forma que en las filas, podemos encontrar la función para las columnas _colnames_.
 
+###Arrays
+
+Los arrays son similares a las matrices pero pueden tener más de dos dimensiones, la forma de crearlo es a través de la siguiente función:
+```
+myarray <- array(vector, dimensions, dimnames)
+```
+_vector_ contiene los datos para el array, _dimensions_ es un vector numérico que expresa el máximo índice para cada dimensión y _dinmanes_ es una lista que es opcional y que contiene las etiquetas. 
+
+_Ejemplo Array_
+En el siguiente ejemplo crearemos un array de tres dimensiones (2x3x4) de números.
+```{R ArrayExample}
+dim1 <- c("A1", "A2")
+dim2 <- c("B1", "B2", "B3")
+dim3 <- c("C1", "C2", "C3", "C4")
+z <- array(1:24, c(2,3,4), dimnames=list(dim1, dim2, dim3))
+z
+
+```
+
+###Factor
+
 Existe un tipo de objeto conocido como Factor en donde sus valores son categóricos, específicamente, nominales u ordinales. 
 
 
@@ -409,13 +434,17 @@ Para cambiar el orden de los niveles se especifica el parámetro "levels" en el o
 x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
 ```
 
-Vamos a utilizar un conjunto de datos ( __dataset__ ) de los vuelos realizados en la ciudad de Nueva York en 2013. Ejecutemos el siguiente código que nos permitirá ver nuestro data.frame 
+### Data frames
+
+Vamos a utilizar un conjunto de datos ( __dataset__ ) de los vuelos realizados en la ciudad de Nueva York en 2013. Ejecutemos el siguiente código que nos permitirá ver nuestro data.frame
 
 ```{R provided}
 # La siguiente línea de código especifica que vamos a utilizar "flights" del paquete nycflights13, el uso de :: se realiza con la finalidad que no se presenten problemas si hay más variables "flights" en nuestro entorno de trabajo.
 nycflights13::flights
 flights
 ```
+
+El _Data frame_ es más general que una matriz ya que puede almacenar diferentes tipos de datos (númericos, carácteres, etc.). Es la estructura más utilizada en los proyectos de R. 
 
 Con la finalidad que podamos tener una primera idea de nuestros datos, vamos a utilizar la función str, en primer lugar, escriba la ayuda de _?str_ y obtenga más información de esta.
 
@@ -441,6 +470,41 @@ Ahora, también podemos ver la información de nuestro data.frame como si fuera un
 ```
 View(flights)
 ```
+Ahora, vamos a crear nuestro propio data frame a través de la función ```data.frame()```:
+```
+mydata <- data.frame(col1, col2, col3,.)
+```
+```col1, col2, col3``` son columnas con vectores de cualquier tipo (numérico, carácter, o lógico). Los nombres de las columnas se pueden declarar a través de la función _names_.
+
+```{R Dataframe1}
+patientID <- c(1, 2, 3, 4)
+age <- c(25, 34, 28, 52)
+diabetes <- c("Type1", "Type2", "Type1", "Type1")
+status <- c("Poor", "Improved", "Excellent", "Poor")
+patientData <- data.frame(patientID, age, diabetes, status)
+patientData
+```
+
+La forma de acceder a la información en el data.frame se puede realizar de varias maneras muy similar que las matrices.
+
+```{R Dataframe2}
+patientData[1:2] #obtenemos los elementos desde la columna 1 hasta la 2
+print("")
+patientData[c("diabetes","status")] #obtenemos los elementos a través de la etiqueta de las columnas
+print("")
+patientData$diabetes #retorna solo un vector de valores de la columna 
+
+```
+
+_$_ nos permite seleccionar directamente la columna del data.frame declarado, a continuación, se muestra un ejemplo de una _tabulación cruzada_ entre las variables status y diabetes.
+
+```{r crosstable}
+table(patientData$diabetes, patientData$status) #tabulación cruzada
+
+```
+
+
+### Operaciones y funciones en R
 
 Vamos a utilizar otras funciones y operaciones en R que nos permitan filtrar y hacer operaciones en los datos. A continuación, se muestra una tabla con la lista de operaciones tanto aritméticas como lógicas que se pueden realizar entre los objetos de R.
 
