@@ -413,26 +413,6 @@ z
 
 ```
 
-###Factor
-
-Existe un tipo de objeto conocido como Factor en donde sus valores son categóricos, específicamente, nominales u ordinales. 
-
-
-```{R factorExample1}
-diabetes <- c("Type1", "Type2", "Type1", "Type1")
-diabetesFactor <- factor(diabetes) 
-```
-
-Cree el siguiente factor y observe el orden de los niveles
-
-```{R factorExample2}
-x <- factor(c("yes", "yes", "no", "yes", "no"))
-```
-
-Para cambiar el orden de los niveles se especifica el parámetro "levels" en el orden deseado
-```{R factorExample3}
-x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
-```
 
 ### Data frames
 
@@ -470,7 +450,7 @@ Ahora, también podemos ver la información de nuestro data.frame como si fuera un
 ```
 View(flights)
 ```
-Ahora, vamos a crear nuestro propio data frame a través de la función ```data.frame()```:
+Ahora, vamos a crear nuestro propio data.frame a través de la función ```data.frame()```:
 ```
 mydata <- data.frame(col1, col2, col3,.)
 ```
@@ -501,6 +481,150 @@ _$_ nos permite seleccionar directamente la columna del data.frame declarado, a 
 ```{r crosstable}
 table(patientData$diabetes, patientData$status) #tabulación cruzada
 
+```
+
+
+###Las funciones attach, detach y with
+
+
+La función attach() agrega el data.frame al directorio de busqueda de R. Cuando el nombre de una variable es encontrada, los data frames del directorio de busqueda son evaluados con el fin de encontrar la variable. 
+
+Vamos a utilizar el siguiente código que utilizará el dataset de mtcars y las variables que lo componen con el fin de generar un resumen de análisis descriptivo (summary) y dos plots. 
+
+
+```{r attachExample}
+summary(mtcars$mpg)
+plot(mtcars$mpg, mtcars$disp)
+plot(mtcars$mpg, mtcars$wt)
+```
+
+Este mismo resultado podemos utilizarlo a través de las funciones attach y detach. ¿Que utilidad tiene?
+
+```{r attachExample2}
+attach(mtcars)
+  summary(mpg)
+  plot(mpg, disp)
+  plot(mpg, wt)
+detach(mtcars)
+```
+Este enfoque tiene limitaciones cuando los objetos almacenados en memoria tienen el mismo nombre. 
+
+```{r attachExample3}
+mpg <- c(25, 36, 47)
+attach(mtcars)
+  plot(mpg, wt)
+detach(mtcars)
+mpg
+```
+
+Para estos casos se puede utilizar un enfoque distinto a través de la función _with()_, apliquemos esta alternativa con el ejemplo anterior. ¿Qué utilidad observa?
+
+```{r attachExample4}
+mpg <- c(25, 36, 47)
+with(mtcars, {
+  summary(mpg, disp, wt)
+  plot(mpg, disp)
+  plot(mpg, wt)
+})
+
+# El uso de los {} es opcional
+ 
+```
+
+La limitación con with es que cualquier objeto creado o asignado solo tendrá representación dentro de él. 
+
+```{r attachExample5}
+with(mtcars, {
+  stats <- summary(mpg)
+  stats
+})
+stats
+ 
+```
+Si es necesario crear o asignar a un objeto dentro de este debemos utilizar el operador <<-
+```{r attachExample6}
+with(mtcars, {
+  nokeepstats <- summary(mpg)
+  keepstats <<- summary(mpg)
+})
+keepstats
+nokeepstats
+
+ 
+```
+
+###Factor
+
+Existe un tipo de objeto conocido como Factor en donde sus valores son categóricos, específicamente, nominales u ordinales. 
+
+
+```{R factorExample1}
+diabetes <- c("Type1", "Type2", "Type1", "Type1")
+diabetesFactor <- factor(diabetes) 
+```
+
+Cree el siguiente factor y observe el orden de los niveles
+
+```{R factorExample2}
+x <- factor(c("yes", "yes", "no", "yes", "no"))
+```
+
+Para cambiar el orden de los niveles se especifica el parámetro "levels" en el orden deseado
+```{R factorExample3}
+x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
+```
+_Ejercicio 10_
+
+Escriba y ejecute el código necesario para crear el factor ordinal ```PartientStatus(Poor, Improved, Excellent)``` y los niveles que impliquen que poor es el menor. Se recomienda utilizar la ayuda de R con el fin de definir el tipo de factor. 
+
+```{R ejercicioFactor1}
+# 1 linea de código
+PatientStatus <-factor(c("Poor", "Improved", "Excellent"), ordered = TRUE, levels=c("Poor", "Improved", "Excellent"))
+# -------------------
+PatientStatus
+```
+
+_Ejercicio 11_
+
+Si x <- c(1, 2, 3, 3, 5, 3, 2, 4, NA), ¿cuáles son los niveles de factor(x)?
+```{R ejercicioFactor2}
+# 1 linea de código
+x <- factor(c(1, 2, 3, 3, 5, 3, 2, 4, NA))
+# -------------------
+x
+```
+
+R/
+
+_Ejercicio 12_
+
+Sea x <- c(11, 22, 47, 47, 11, 47, 11). Si ejecutamos la expresión factor(x, levels=c(11,22,47), ordered=TRUE) cuál será el cuarto elemento que se despliega en la salida?
+
+R/
+
+```{R ejercicioFactor3}
+# 2 lineas de código
+x <- c(11, 22, 47, 47, 11, 47, 11)
+x <- factor(x, levels=c(11,22,47), ordered=TRUE)
+x[4]
+# -------------------
+```
+_Ejercicio 13_
+
+Si z <-c("p", "a" , "g", "t", "b"), cuál de las expresiones R reemplazan el tercer elemento en z con "b".
+
+a. factor(z[3]) <-"b"
+b. levels(z[3]) <-"b"
+c. z[3] <-"b"
+
+R/
+
+```{R ejercicioFactor4}
+# 2 lineas de código
+z <- factor(c("p", "a" , "g", "t", "b"))
+z[3] <-"b"
+# -------------------
+z
 ```
 
 
