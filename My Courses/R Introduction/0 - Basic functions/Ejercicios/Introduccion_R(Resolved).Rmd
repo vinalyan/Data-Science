@@ -627,94 +627,33 @@ z[3] <-"b"
 z
 ```
 
+### Listas
 
-### Operaciones y funciones en R
+Las listas son una colección ordenada de objetos que permite reunir una variedad de estos (posiblemente no relacionados) bajo un mismo nombre. Por ejemplo, podemos tener una lista que contiene una combinación de vectores, matrices, data frames, y otras listas. La forma de crear una lista es a través de la función ```list()```
 
-Vamos a utilizar otras funciones y operaciones en R que nos permitan filtrar y hacer operaciones en los datos. A continuación, se muestra una tabla con la lista de operaciones tanto aritméticas como lógicas que se pueden realizar entre los objetos de R.
+```mylist <- list(object1, object2, ...)```
+
+Opcionalmente, podemos darles un nombre a los objetos de la lista
+
+```mylist <- list(name1=object1, name2=object2, ...)```
 
 
-<img src='https://github.com/urcuqui/Data-Science/blob/master/Utilities/R/operations.png?raw=true' width='250' height='250'>
-
-Hagamos unas operaciones básicas, nosotros podemos utilizar R como una especie de "calculadora"" (muy parecido a la operación entre celdas en Excel). En el siguiente cuadro de código hay unas variables númericas con valores ya asignados con el fin que usted pueda realizar las siguientes operaciones:
-
-+ x + y 
-+ x * y 
-+ -x
-+ sqrt(x)
-+ x == y
-+ x != y
-
-_Ejercicio 10_
-
-```{R example7}
-#Ejecute las siguientes tres líneas de código para crear las variables 
-x = c(1, 2, 4, 7, 9, 0)
-y = 4
-z = c(0.5, 2, 3, 5, 1, 0)
-
-# Escriba en el siguiente espacio la operación suma entre "x" y "y", y asígnelo a resultado_suma (1 línea de código)
-resultado_suma <- x + y
-# Escriba en el siguiente espacio la operación multiplicación entre "x" y "z", y asígnelo a resultado_multiplicacion (1 línea de código)
-resultado_multiplicacion <- x * y
-# Escriba en el siguiente espacio la operación multiplicación negativa a "z", y asígnelo a resultado_negativo (1 línea de código)
-resultado_negativo <- -z
-# Escriba en el siguiente espacio la operación de raíz cuadrada "y", y asígnelo a resultado_raiz (1 línea de código)
-resultado_raiz <- sqrt(y)
-# Escriba en el siguiente espacio la operación lógica de igualdad entre "x" y "z", y asígnelo a resultado_igualdad (1 línea de código)
-resultado_igualdad <- x == z
-# Escriba en el siguiente espacio la operación lógica de diferencia entre "x" y "y", y asígnelo a resultado_igualdad (1 línea de código)
-resultado_diferencia <- x != y
-
-# --------------------------- #
-  
-# Ahora ejecute las siguientes líneas de código que le permitirán observar los resultados de sus operaciones.  
-
-print("Resultado Suma")
-resultado_suma
-print("Resultado multiplicación")
-resultado_multiplicacion
-print("Resultado negativo")
-resultado_negativo
-print("Resultado raíz cuadrada")
-resultado_raiz
-print("Resultado de operación lógica: igualdad")
-resultado_igualdad
-print("Resultado de operación lógica: diferencia")
-resultado_diferencia
-```
-
-Ahora, exploremos la función _filter()_, esta función nos permite obtener un subconjunto de un observaciones de un conjunto más grande basado en los parámetros que le suministremos, vea el siguiente ejemplo. 
+```{R listExample1}
+g <- "My first list" 
+h <- c(25, 26, 18, 39)
+j <- matrix(1:10, nrow = 5)
+k <- c("one", "two", "trhee")
+mylist <- list(title=g, ages=h, j, k) # create a list
+mylist
 
 ```
-filter(flights,  carrier == "UA")
+Podemos acceder a los elementos de la lista de la siguiente forma.
+```{R listExample2}
+mylist[[2]]
+mylist[[3]][1,] #retorna la matric e imprime la primera fila
+mylist[["ages"]]
 ```
 
-La anterior línea de código nos permite obtener todos los vuelos realizados por una sola aerolínea (para nuestro caso aquella abreviada con "UA").
-
-En la siguiente tabla puede observar la sintaxis para las operaciones lógicas en R.
-
-<img src='https://github.com/urcuqui/Data-Science/blob/master/Utilities/R/logical.png?raw=true' width='250' height='250'>
-
-
-Nosotros podemos realizar varias operaciones lógicas enlazadas entre sí, por ejemplo:
-
-
-```
-filter(flights,  carrier == "B6" & distance <= 1500)
-```
-
-La anterior línea de código nos da los vuelos realizados en el año 2014 y que tuvieron una distancia hasta 1500 millas.
-
-Ahora, le proponemos como ejercicio obtener el subconjunto de datos de los vuelos de la aerolinea "AA" que tuvieron una distancia entre 1300 y 1800 millas.
-
-
-_Ejercicio 11_
-
-```{R example8}
-# Escriba en el siguiente espacio el filtro que permita obtener el subconjunto de vuelos (1 línea de código)
-filter(flights, carrier== "AA" & (distance >= 1300 || distance <= 1800))
-# --------------------------- #
-```
 
 ##Cargar archivos
 
@@ -744,16 +683,41 @@ read.csv2(file.choose())
 ```
 Para el siguiente ejercicio cargue el archivo "parks.csv" y asignelo a una variable "df".
 
-_Ejercicio 12_
+_Ejercicio 14_
 
-```{R example9}
+```{R example1}
 # Escriba en el siguiente espacio el código que permita cargar el archivo parks.csv (1 línea de código)
 df <- read.csv(file.choose())
 # --------------------------- #
 ```
+## Ingresando datos desde el teclado 
+
+La función ```edit()``` nos permite ingresar información a través del teclado a algún objeto definido previamente.
+
+_Ejercicio 15_
+
+Ejecute el siguiente código e ingrese los elementos que completen el dataframe.
+
+```{R Inexample1}
+mydata <- data.frame(age=numeric(0), gender=character(0), weight=numeric(0))
+mydata <- edit(mydata)
+
+```
+
+## Importando desde Excel
+
+La mejor forma es importar archivos tipo CSV (Comma Separated Values) generados desde Excel. Dado el caso se requiera importar directamente desde el archivo entonces podemos utilizar las funciones del paquete xlsx
+
+```{R Inexample2}
+#install.packages("xlsx")
+library("xlsx")
+workbook <- "D:/Usuarios/rhaps/Downloads/variables proyecto TMRC.xlsx" # dirección del archivo
+mydataframe <- read.xlsx(workbook, 1)
+View(mydataframe)
+```
 
 
-<h2>Referencias</h2>
+##Referencias
 
 + Kabacoff, R. (2015). R IN ACTION: Data analysis and graphics with R
 + Wickham, H., & Grolemund, G. (2016). R for Data Science.
