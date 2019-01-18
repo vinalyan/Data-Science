@@ -117,8 +117,11 @@ typeof(x)
 
 
 _Ejercicio 3_
+
+Escriba un vector de enteros con cuatro elementos
+
 ```{R example2}
-# Digite el ejemplo del vector en el siguiente espacio (1 línea de código)
+# Escriba un vector de enteros con cuatro elementos (1 línea de código)
 vector <- c(1,4,5,6)
 # --------------------------- #
 vector
