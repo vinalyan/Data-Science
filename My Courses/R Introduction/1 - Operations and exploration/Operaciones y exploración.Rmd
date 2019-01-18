@@ -99,4 +99,57 @@ filter(flights, carrier== "AA" & (distance >= 1300 || distance <= 1800))
 
 ## Gráficos
 
-r ES
+R es una plataforma muy buena para el desarrollo de visualizaciones.
+
+```{R GExample1}
+attach(mtcars)
+plot(wt, mpg) # es la función encargada de utilizar el visualizador de R y generar en él un gráfico de dispersión entre las variables cuantitativas
+abline(lm(mpg~wt)) # encargada de agregar la línea que mejor se ajusta a los datos de las dos variables
+title("Regression of MPG on Weight") # agrega el titulo al plot
+```
+Ahora procederemos a guardar el plot en un archivo .pdf (previamente visto). 
+
+```{R GExample2}
+pdf("mygraph.pdf")
+attach(mtcars)
+plot(wt, mpg) # es la función encargada de utilizar el visualizador de R y generar en él un gráfico de dispersión entre las variables cuantitativas
+abline(lm(mpg~wt)) # encargada de agregar la línea que mejor se ajusta a los datos de las dos variables
+title("Regression of MPG on Weight")
+dev.off()
+```
+Es importante tener en cuenta que si vamos a generar distintos insumos podemos utilizar la función ```dev.new()``` con el fin de especificar una nueva visualización y no exista la posibilidad de borrar alguno creado previamente.
+
+Vamos a empezar a explorar la aplicación de visualizaciones en R a través del siguiente ejercicio.
+
+_ Ejercicio 1_
+
+Por favor cree un data frame con los siguientes valores:
+```
+dose <- c(20, 30, 40, 45, 60)
+drugA <- c(16, 20, 27, 40, 60)
+drugB <- c(15, 18, 25, 31, 40)
+```
+```{R exercise1}
+# escriba las lineas de código necesarias para crear el data frame con los valores solicitados
+dose <- c(20, 30, 40, 45, 60)
+drugA <- c(16, 20, 27, 40, 60)
+drugB <- c(15, 18, 25, 31, 40)
+df <- data.frame(dose, drugA, drugB)
+df
+# -----------------------------------
+```
+Ahora veamos cómo crear un simple plot de una línea que relaciona la tendencia de dos variables cuantitativas
+```{R GExample3}
+plot(df$dose, df$drugA, type="b")
+```
+La función ```plot()``` es genérica para objetos en R y su salida dependerá del tipo de objeto a ser visualizado. Para el caso anterior podemos ver las variables de la siguiente forma en un plano 'x' y 'y'  ```plot(x, y, type="b") ```, los datos para 'x' iran en el eje horizontal y los de 'y' para el eje vertical. La opción  ```type``` nos indica que tanto los puntos y las lineas deben ser visualizadas. 
+
+_Ejercicio 2_ 
+
+Utilice la ayuda en la función plot y busque la manera de cambiar los títulos de ambos ejes de la anterior visualización.
+
+```{R exercise2}
+# 1 linea de código
+plot(df$drugB, df$dose, type = "b", xlab = "drug", ylab = "dose")
+# --------------------
+```
