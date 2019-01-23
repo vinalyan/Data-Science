@@ -64,7 +64,7 @@ print("Resultado de operación lógica: diferencia")
 resultado_diferencia
 ```
 
-Ahora, exploremos la función _filter()_, esta función nos permite obtener un subconjunto de un observaciones de un conjunto más grande basado en los parámetros que le suministremos, vea el siguiente ejemplo. 
+Ahora, exploremos la función ```filter()``` del paquete``` dplyr```, esta función nos permite obtener un subconjunto de un observaciones de un conjunto más grande basado en los parámetros que le suministremos, vea el siguiente ejemplo. 
 
 ```
 filter(flights,  carrier == "UA")
@@ -79,7 +79,6 @@ En la siguiente tabla puede observar la sintaxis para las operaciones lógicas en
 
 Nosotros podemos realizar varias operaciones lógicas enlazadas entre sí, por ejemplo:
 
-
 ```
 filter(flights,  carrier == "B6" & distance <= 1500)
 ```
@@ -92,9 +91,13 @@ Ahora, le proponemos como ejercicio obtener el subconjunto de datos de los vuelo
 _Ejercicio 2_
 
 ```{R example2}
+library("nycflights13")
+library("tidyverse")
+with(flights, {
 # Escriba en el siguiente espacio el filtro que permita obtener el subconjunto de vuelos (1 línea de código)
-filter(flights, carrier== "AA" & (distance >= 1300 || distance <= 1800))
+View(dplyr::filter(flights, carrier == "AA" & (distance >= 1300 & distance <= 1800)))
 # --------------------------- #
+})
 ```
 
 ## Gráficos
@@ -106,6 +109,7 @@ attach(mtcars)
 plot(wt, mpg) # es la función encargada de utilizar el visualizador de R y generar en él un gráfico de dispersión entre las variables cuantitativas
 abline(lm(mpg~wt)) # encargada de agregar la línea que mejor se ajusta a los datos de las dos variables
 title("Regression of MPG on Weight") # agrega el titulo al plot
+detach(mtcars)
 ```
 Ahora procederemos a guardar el plot en un archivo .pdf (previamente visto). 
 
@@ -121,7 +125,7 @@ Es importante tener en cuenta que si vamos a generar distintos insumos podemos u
 
 Vamos a empezar a explorar la aplicación de visualizaciones en R a través del siguiente ejercicio.
 
-_ Ejercicio 1_
+_Ejercicio 1_
 
 Por favor cree un data frame con los siguientes valores:
 ```
@@ -140,7 +144,8 @@ df
 ```
 Ahora veamos cómo crear un simple plot de una línea que relaciona la tendencia de dos variables cuantitativas
 ```{R GExample3}
-plot(df$dose, df$drugA, type="b")
+myplot <- plot(df$dose, df$drugA, type="b")
+myplot
 ```
 La función ```plot()``` es genérica para objetos en R y su salida dependerá del tipo de objeto a ser visualizado. Para el caso anterior podemos ver las variables de la siguiente forma en un plano 'x' y 'y'  ```plot(x, y, type="b") ```, los datos para 'x' iran en el eje horizontal y los de 'y' para el eje vertical. La opción  ```type``` nos indica que tanto los puntos y las lineas deben ser visualizadas. 
 
@@ -153,3 +158,50 @@ Utilice la ayuda en la función plot y busque la manera de cambiar los títulos de
 plot(df$drugB, df$dose, type = "b", xlab = "drug", ylab = "dose")
 # --------------------
 ```
+### Parámetros visuales
+
+Nosotros podemos cambiar muchos parámetros a una visualización (por ejemplo, estilo de letra, colores, ejes y títulos) a través de los parámetros visuales.
+
+Una forma de acceder a estas opciones es través de la función ```par()```, su formato es ```par(optionname=value, optionname=value, ...)```. Especificando ```par()``` sin parámetros produce una lista de las configuraciones visuales actuales y adicionando la sentencia  ```no.readonly=TRUE```como parámetro a  ```par() ```, esta función retorna la lista de las configuraciones visuales que se pueden modificar. 
+
+```{R GExample4}
+par(no.readonly=TRUE)
+```
+Vamos a modificar alguna de estas opciones y adicionarlas al plot previamente creado. 
+```{R GExample5}
+opar <- par(no.readonly=TRUE)
+#lty es el tipo de linea 0=blank, 1=solid (default), 2=dashed, 3=dotted, 4=dotdash, 5=longdash, 6=twodash), también revise los siguientes caracteres como parámetros "blank", "solid", "dashed", "dotted", "dotdash", "longdash", or "twodash"
+#pch nos permite cambiar el simbolo por cada punto que representa un dato en la visualización
+par(lty=2, pch=17) 
+plot(dose, drugA, type="b")
+par(opar)
+```
+También podemos hacer las modificaciones visuales llamando varias veces la función ```par()```, por ejemplo
+
+```
+par(lty=2)
+par(pch=17)
+```
+O podemos ir directamente a los parámetros del plot, por ejemplo
+
+```
+plot(dose, drugA. type="b", lty=2. pch=17)
+```
+
+### Símbolos y líneas 
+
+
+Ya hemos visto algunos parámetros que nos permiten acceder a las modificaciones visuales, pero existen otro conjunto que puede ser consultado en la ayuda de par, algunos de estos son:
+
+| __Parámetro__ | __Descripción__ | 
+|----------------|-----------------------------------------------------------------------|
+| _pch_ | Especifica el símbolo a usar en el punto que representa al dato en la visualización. | 
+| _cex_ | Especifica el tamaño del símbolo que representa al dato en la visualización. Un plot inicia por default en 1, si se quiere especificar un 50% más grande entonces se define 1.5 como entrada, si se quiere un 50% más pequeño entonces se ingresa 0.5. | 
+| _lty_ | Especifica el tipo de linea. | 
+| _lwd_ | Especifica el grosor de la linea, por default viene con un valor de 1. Si se desea tener un valor el doble de grande entonces se utiliza el 2. | 
+
+
+ 
+
+
+## Referencias
