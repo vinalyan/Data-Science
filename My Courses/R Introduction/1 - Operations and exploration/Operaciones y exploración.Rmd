@@ -195,13 +195,82 @@ Ya hemos visto algunos parámetros que nos permiten acceder a las modificaciones 
 
 | __Parámetro__ | __Descripción__ | 
 |----------------|-----------------------------------------------------------------------|
-| _pch_ | Especifica el símbolo a usar en el punto que representa al dato en la visualización. | 
+| _pch_ | Especifica el símbolo a usar en el punto que representa al dato en la visualización. Los valores de este parámetro van de 0-25. | 
 | _cex_ | Especifica el tamaño del símbolo que representa al dato en la visualización. Un plot inicia por default en 1, si se quiere especificar un 50% más grande entonces se define 1.5 como entrada, si se quiere un 50% más pequeño entonces se ingresa 0.5. | 
 | _lty_ | Especifica el tipo de linea. | 
 | _lwd_ | Especifica el grosor de la linea, por default viene con un valor de 1. Si se desea tener un valor el doble de grande entonces se utiliza el 2. | 
 
+```{R GExample6}
+plot(dose, drugA, type="b", lty=3, lwd=3, pch=15, cex=2)
+``` 
+### Símbolos y líneas 
 
- 
+podemos también acceder a las propiedades de los colores del plot.
+
+| __Parámetro__ | __Descripción__ | 
+|----------------|-----------------------------------------------------------------------|
+| _col_ | Define el color, algunas funciones (lineas y pasteles) aceptaran vectors con valores, por ejemplo ```col=c("red", "blue")```. | 
+| _co.axis_ | Color para los textos del los ejes | 
+| _col.lab_ | Color para las etiquetas | 
+| _col.main_ | Color para el titulo. | 
+| _col.sub_ | Color para los subtitulos. |
+| _col.fg_ | Color para el primer plano |
+| _col.bg_ | Color para el fondo |
+
+Podemos definir los colores con un indice, nombre, hexadecimal, RGB o HSV. Por ejemplo, ```col=1, col="white", col="#FFFFFF", col=rgb(1,1,1), and col=hsv(0,0,1)``` son equivalentes para el color blanco. 
+
+```{R GExample7}
+# la siguiente función retorna los colores disponibles
+colors()
+```
+
+Existen funciones que nos permiten crear vectores de colores contiguos, entre estos podemos encontrar ```rainbow(), heat.colors(), terrain.colors(), topo.colors(), and cm.colors().```, por ejemplo, ```rainbow(10)``` produce un vector contiguo de colores del arcoiris, ```gray()``` genera los niveles de grises. 
+
+```{R GExample8}
+n <- 10
+mycolors <- rainbow(n)
+#?pie
+#?rep
+pie(rep(1,n), labels=mycolors, col=mycolors)
+mygrays <- gray(0:n/n)
+pie(rep(1,n), labels= mygrays, col = mygrays)
+#plot con varias modificaciones 
+plot(1:7, rnorm(7), 
+     type = "s", xaxt = "n", frame = FALSE, col = "red")
+title("Main Title", sub = "sub title",
+      cex.main = 2,   font.main= 4, col.main= "green",
+      cex.sub = 0.75, font.sub = 3, col.sub = "yellow")
+axis(1, 1:7, LETTERS[1:7], col.axis = "blue", col.sub="green")
+
+```
+
+__Ejercicio 1__
+
+1. Revise el diccionario de datos del dataset mpg del paquete ggplot2
+2. Cargue el dataset mpg del paquete ggplot2 y cree un diagrama de dispersión de las variables disp y hwy
+
+```{R Excercise1}
+library("tidyverse")
+with(mpg,{
+  plot(displ, hwy)
+})
+
+```
+¿Logra encontrar algún patrón en los datos?
+
+__Ejercicio 1__
+
+Asocie al anterior plot una tercera dimensión, es decir, asigne al párametro de color la variable class
+
+```{R Excercise1}
+attach(ggplot2::mpg)
+  class_factor = as.factor(class)
+  color_easy = c("red", "blue", "yellow", "green", "pink", "purple", "salmon2")[class_factor]
+  # una linea de código
+  plot(displ, hwy, col=color_easy)
+  # -------------------------------
+detach(ggplot2::mpg)
+```
 
 
 ## Referencias
