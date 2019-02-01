@@ -1,0 +1,268 @@
+---
+title: "Gestión de datos"
+author: "Christian Urcuqui"
+date: "31 de enero de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introducción
+
+Este módulo tiene como objetivo introducir más mecanismos para la exploración y la manipulación de datos a través del lenguaje R, para ello se explorarán las siguientes secciones:
+
++ Funciones para recolección y análisis
++ Estadísticas descriptivas por grupos
++ Frecuencia y tablas de contingencia 
++ Pruebas de independencia 
++ Medidas de asociación
++ Correlaciones y pruebas t
++ Introducción a SQL y su aplicación en R
+
+
+```{r start}
+manager <- c(1, 2, 3, 4, 5)
+date <- c("10/24/08", "10/28/08", "10/1/08", "10/12/08", "5/1/09")
+country <- c("US", "US", "UK", "UK", "UK")
+gender <- c("M", "F", "F", "M", "F")
+age <- c(32, 45, 25, 39, 99)
+q1 <- c(5, 3, 3, 3, 2)
+q2 <- c(4, 5, 5, 3, 2)
+q3 <- c(5, 2, 5, 4, 1)
+q4 <- c(5, 5, 5, NA, 2)
+q5 <- c(5, 5, 2, NA, 1)
+leadership <- data.frame(manager, date, country, gender, age,
+q1, q2, q3, q4, q5, stringsAsFactors=FALSE)
+```
+
+## Funciones para recolección y análisis
+
+Recordemos que en R a diferencia de otros lenguajes la forma de asignar y crear una variable es a través de la sentencia: 
+```
+variable <- expresión
+```
+
+Algunas operaciones aritméticas a tener en cuenta:
+
+| __Operación__ | __Descripción__ | 
+|----------------|-----------------------------------------------------------------------|
+| ```x + y```  | Suma | 
+| ```x - y```  | Resta | 
+| ```x * y```  | Multiplicación | 
+| ```x / y```  | División |
+| ```^ or **``` | exponenciación | 
+| ```x%%y``` | Módulo | 
+
+__Ejemplo 1__
+
+
+A continuación, veremos como agregar nuevas columnas a una data.frame con base en los resultados de sus datos. 
+
+```{r example1, echo=FALSE}
+
+mydata <- data.frame(x1 = c(2, 2, 6, 4),
+                     x2 = c(3, 4, 2, 8))
+
+# primera forma de asignación
+mydata$sumx <- mydata$x1 + mydata$x2
+mydata$meanx <- (mydata$x1 + mydata$x2) / 2
+
+# segunda forma de asignación
+attach(mydata)
+mydata$sumx <- x1 + x2
+mydata$meanx <- (x1 + x2) / 2
+detach(mydata)
+
+# tercera forma de asignación
+mydata <- transform(mydata, 
+                    sumx= x1 + x2,
+                    meanx = (x1 + x2) / 2)
+```
+
+### Recodificación de variables
+
+En algunas ocasiones será necesario crear nuevos valores de una variable condicional a los valores existentes de las mismas u otras variables, por ejemplo:
+
++ cambiar una variable continua por un conjunto de categorías
++ Reemplazar valores mal codificados en valores correctos
++ Crear o completar unos valores teniendo en cuenta unas reglas
+
+Para ello podemos utilizar uno o más operadores lógicos
+
+
+| __Operación__ | __Descripción__ | 
+|----------------|-----------------------------------------------------------------------|
+| ```x == y``` | Igualidad | 
+| ```x & y``` | Operador lógico "and" | 
+| ```x | y``` | Operador lógico "or" | 
+| ```x > y```| Operador lógico mayor | 
+| ```x > y``` | Operador lógico menor | 
+| ```x >= y``` | Operador lógico mayor o igual |
+| ```x <= y``` | Operador lógico menor o igual |
+| ```isTRUE(x)``` | evalua si _x_ es TRUE | 
+
+
+Supongamos que deseamos transformar una variable cuantitiva de edad a una variable categorica compuesta por los siguientes valores ```Young, Middle Aged, Elder)```
+
+Explore el siguiente data.frame que corresponde a la administración que realizan las mujeres y los hombres en las empresas, con el fin de evaluar el desempeño de ambos géneros se propone un conjunto de datos base la aplicación de la analítica de datos, ¿encuentra alguna particularidad?
+
+__Ejemplo 2__
+
+Representemos el valor como una anomalía en los datos de registros
+
+```{r example2}
+leadership$age[leadership$age == 99] <- NA
+
+```
+La sentencia ```variable[condición] <- expresión``` permite asignar los valores de la expresión si y solo si la condición es TRUE
+
+Ahora vamos a crear una nueva variable categorice que corresponde a los rangos para los valores de la edad
+
+__Ejemplo 3__
+
+```{r example3}
+leadership$agecat[leadership$age > 75] <- "Elder"
+leadership$agecat[leadership$age >= 55 &
+leadership$age <= 75] <- "Middle Aged"
+leadership$agecat[leadership$age < 55] <- "Young"
+```
+### Renombrando variables
+
+
+De la misma forma que podemos cambiar los datos manualmente, podemos realizar cambios sobre las columnas de la siguiente manera:
+
+__Ejemplo 4__
+```{r example4}
+# a través del editor de RStudio
+fix(leadership)
+# podemos utilizar la función rename() del paquete reshape y pasarle un vector de caracteres que correspondan a todas las columnas del data.frame
+#install.packages("reshape")
+library(reshape)
+leadership <- rename(leadership, c(manager="managerID", date="testDate", country="country", gender= "gender", age="age", q1= "q1", q2="q2",q3="q3",q4="q4",q5="q5",agecat="agecat"))
+colnames(leadership)
+# tambien podemos utilizar la función colnames 
+colnames(leadership) <- c(manager="ID", date="testDate", country="country", gender= "gender", age="age", q1= "q1", q2="q2",q3="q3",q4="q4",q5="q5",agecat="agecat")
+colnames(leadership)
+```
+
+### Tratamiento de valores faltantes 
+
+En R los valores faltantes son representados como ```NA``` (not avaiable). Los valores que son atipicos (por ejemplo, los números dividos por 0) son representados con el simbolo ```NaN```(Not a Number).
+
+La función ```is.na() ``` nos permitirá testear la presencia de NA
+
+__Ejemplo 5__
+```{r example5}
+y <- c(1, NA, 3, NaN)
+is.na(y)
+```
+Note que la función ```is.na()``` retorna un vector con el tamaño del vector analizado y los valores en FALSE donde no hay valores NaN y NAN.
+
+__Ejercicio 2__
+
+Aplique la función ```is.na()``` sobre la sexta hasta la décima columna del data.frame leadership.
+
+```{r exercise2}
+# 1 linea de código
+is.na(leadership[,6:10])
+```
+### Excluyendo valores faltantes para análisis
+
+Una vez identificados los valores faltantes, ya es deber del científico de datos si los elimina, los almacena en otra estructura o los cambia por un valor. Es importante aplicar este proceso ya que si trabajamos con algunas operaciones (por ejemplo, las aritméticas) podría ocasionar errores en los resultados.
+
+__Ejemplo 6__
+
+Observe el resultado al operar con vectores que integran valores faltantes
+
+```{r example6}
+x <- c(1, 2, NA, 3)
+y <- x[1] + x[2] + x[3] + x[4]
+z <- sum(x)
+z
+```
+
+__Ejemplo 7__
+
+Gran parte de las funciones numéricas traen consigo un parámetro que permite expresarles que omita los valores faltantes
+
+```{r example7}
+x <- c(1, 2, NA, 3)
+y <- sum(x, na.rm=TRUE)
+y
+```
+Podemos remover todas las observaciones que contengan valores faltantes a través de la función ```na.omit```. ¿Esta es una buena práctica?
+
+R/
+
+__Ejemplo 8__
+
+```{r example8}
+# mantenga la persistencia de su data.frame y cree uno nuevo donde va a realizar los cambios
+newdata <- na.omit(leadership)
+newdata
+```
+### Fechas
+
+Las fechas son típicamente tratadas como cadenas de caracteres que pueden ser transformadas a variables fecha que son almacenadas como numéricas en R. La función para la transformación ```as.Date```. La sintaxis es ```as.Date(x, "input_format")```, donde ```x``` es la fecha en carácter y ```input_format``` es el formato apropiado para la fecha.
+
+| __Simbolo__ | __Significado__ | __Ejemplo__ | 
+|----------------|-----------------------------------------------------------------------|
+| ```%d``` | Día como número (0-31) |  01-31  |
+| ```a``` | Abreviación del día de la semana |  Mon |
+| ```A``` | Día no abreviado | Monday |
+| ```%m```| Mes (00-12) | 00-12 |
+| ```%b``` | Abreviación del  mes| Jan | 
+| ```%B``` | Mes no abeviado | January |
+| ```y``` | año en dos digítos | 07 |
+| ```Y``` | año en cuatro digítos |  2007 |
+
+El formato por defecto de las fechas es yyyy-mm-dd. 
+
+__Ejemplo 9__
+
+```{r example9}
+# ejemplo de vector con fechas (Date)
+mydates <- as.Date(c("2007-06-22", "2004-02-13"))
+mydates
+```
+
+__Ejemplo 10__
+
+Ahora si tenemos en otro formato las fechas en los caracteres, al transformarlas veremos que el formato por defecto prevalece
+
+```{r example10}
+# convertir a otro formato de fecha
+strDates <- c("01/05/1965", "08/16/1975")
+dates <- as.Date(strDates, "%m/%d/%Y")
+dates
+```
+
+__ Ejercicio 3__
+
+Implemente el código necesario que permita cambiar la variable carácter de age del data.frame leadership a un tipo Date
+
+```{r exercise3}
+# 1 linea de código
+leadership$testDate <- as.Date(leadership$testDate, "%m/%d/%y")
+leadership$testDate
+# -----------------------------------
+```
+
+
+__Ejemplo 11__
+
+Podemos usar la función ```format(X, format="output_format")``` para obtener una fecha en un formato especifico, también, nos sirve para extraer porciones de este.
+
+```{r example11}
+today <- Sys.Date() # obtenemos la fecha del sistema
+format(today, format="%B %d %Y")
+```
+
+## Referencias
+
++ Murrel, p. (2005). R in Action.
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
