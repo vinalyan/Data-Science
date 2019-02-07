@@ -13,53 +13,45 @@ class Nodo:
     def get_hijos(self):
         return self.hijos
     
-    """
-     Asigna al nodo la lista de hijos que son pasados por parámetro
-    """
+    
+    #Asigna al nodo la lista de hijos que son pasados por parámetro    
     def set_hijos(self, hijos):
         self.hijos = hijos
         if self.hijos != None:
             for h in self.hijos:
                 h.padre = self
-    """
-     Retorna el nodo padre
-    """                
+    
+    # Retorna el nodo padre
+                    
     def get_padre(self):
         return self.padre
 
-    """
-     Asigna al nodo padre de este nodo
-    """  
+    
+    # Asigna al nodo padre de este nodo      
     def set_padre(self, padre):
         self.padre = padre
 
-    """
-     Asigna el dato almacenado en el nodo
-    """  
+    
+    # Asigna el dato almacenado en el nodo      
     def set_datos(self, datos):
         self.datos = datos
 
-     """
-     Devuelve el dato almacenado en el nodo
-    """     
+    
+    # Devuelve el dato almacenado en el nodo         
     def get_datos(self):
         return self.datos
 
-    """
-     Asigna el costo del nodo dentro del árbol
-    """  
+    
+    # Asigna el costo del nodo dentro del árbol      
     def set_coste(self, coste):
         self.coste = coste
 
-    """
-     Retorna el costo 
-    """  
+    # Retorna el costo       
     def get_coste(self):
         return self.coste
 
-    """
-     Retorna True si el dato contenido en el nodo es igual al nodo pasado como parámetro
-    """  
+   
+    # Retorna True si el dato contenido en el nodo es igual al nodo pasado como parámetro      
     def igual(self, nodo):
         if self.get_datos() == nodo.get_datos():
             return True
