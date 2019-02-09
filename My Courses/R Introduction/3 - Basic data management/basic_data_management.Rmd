@@ -128,6 +128,19 @@ leadership$agecat[leadership$age >= 55 &
 leadership$age <= 75] <- "Middle Aged"
 leadership$agecat[leadership$age < 55] <- "Young"
 ```
+
+
+__Ejercicio 1__
+
+Cree una nueva variable con las capitales de cada país del dataset leadership
+
+
+```{r exercise1}
+leadership$capital[leadership$country == "US"] <- "Washington"
+leadership$capital[leadership$country == "UK"] <- "London"
+View(leadership)
+```
+
 ### Renombrando variables
 
 

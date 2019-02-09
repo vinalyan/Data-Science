@@ -256,6 +256,11 @@ q1, q2, q3, q4, q5, stringsAsFactors=FALSE)</code></pre>
 leadership$agecat[leadership$age &gt;= 55 &amp;
 leadership$age &lt;= 75] &lt;- &quot;Middle Aged&quot;
 leadership$agecat[leadership$age &lt; 55] &lt;- &quot;Young&quot;</code></pre>
+<p><strong>Ejercicio 1</strong></p>
+<p>Cree una nueva variable con las capitales de cada país del dataset leadership</p>
+<pre class="r"><code>leadership$capital[leadership$country == &quot;US&quot;] &lt;- &quot;Washington&quot;
+leadership$capital[leadership$country == &quot;UK&quot;] &lt;- &quot;London&quot;
+View(leadership)</code></pre>
 </div>
 <div id="renombrando-variables" class="section level3">
 <h3>Renombrando variables</h3>
@@ -270,12 +275,12 @@ leadership &lt;- rename(leadership, c(manager=&quot;managerID&quot;, date=&quot;
 colnames(leadership)</code></pre>
 <pre><code>##  [1] &quot;managerID&quot; &quot;testDate&quot;  &quot;country&quot;   &quot;gender&quot;    &quot;age&quot;      
 ##  [6] &quot;q1&quot;        &quot;q2&quot;        &quot;q3&quot;        &quot;q4&quot;        &quot;q5&quot;       
-## [11] &quot;agecat&quot;</code></pre>
+## [11] &quot;agecat&quot;    &quot;capital&quot;</code></pre>
 <pre class="r"><code># tambien podemos utilizar la función colnames 
 colnames(leadership) &lt;- c(manager=&quot;ID&quot;, date=&quot;testDate&quot;, country=&quot;country&quot;, gender= &quot;gender&quot;, age=&quot;age&quot;, q1= &quot;q1&quot;, q2=&quot;q2&quot;,q3=&quot;q3&quot;,q4=&quot;q4&quot;,q5=&quot;q5&quot;,agecat=&quot;agecat&quot;)
 colnames(leadership)</code></pre>
 <pre><code>##  [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
-##  [7] &quot;q2&quot;       &quot;q3&quot;       &quot;q4&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+##  [7] &quot;q2&quot;       &quot;q3&quot;       &quot;q4&quot;       &quot;q5&quot;       &quot;agecat&quot;   NA</code></pre>
 </div>
 <div id="tratamiento-de-valores-faltantes" class="section level3">
 <h3>Tratamiento de valores faltantes</h3>
@@ -319,10 +324,10 @@ y</code></pre>
 <pre class="r"><code># mantenga la persistencia de su data.frame y cree uno nuevo donde va a realizar los cambios
 newdata &lt;- na.omit(leadership)
 newdata</code></pre>
-<pre><code>##   ID testDate country gender age q1 q2 q3 q4 q5 agecat
-## 1  1 10/24/08      US      M  32  5  4  5  5  5  Young
-## 2  2 10/28/08      US      F  45  3  5  2  5  5  Young
-## 3  3  10/1/08      UK      F  25  3  5  5  5  2  Young</code></pre>
+<pre><code>##   ID testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 1  1 10/24/08      US      M  32  5  4  5  5  5  Young Washington
+## 2  2 10/28/08      US      F  45  3  5  2  5  5  Young Washington
+## 3  3  10/1/08      UK      F  25  3  5  5  5  2  Young     London</code></pre>
 </div>
 <div id="fechas" class="section level3">
 <h3>Fechas</h3>
@@ -475,12 +480,12 @@ is.numeric(a)</code></pre>
 <p>Crea un nuevo conjunto de datos que contiene filas ordenadas desde el administrador más joven al administrador más antiguo</p>
 <pre class="r"><code>newdata &lt;- leadership[order(leadership$age),]
 newdata</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
-## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young
-## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
-## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young     London
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young     London
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young Washington
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;     London</code></pre>
 <p><em>Ejemplo 16</em></p>
 <p>Creemos un nuevo dataset que contiene las filas ordenadas por el género y la edad, es decir, el orden del abecedario (primero va la letra F para femenino y luego M para masculino) y la edad del administrador desde el más viejo al más joven</p>
 <pre class="r"><code>attach(leadership)</code></pre>
@@ -489,12 +494,12 @@ newdata</code></pre>
 ##     age, country, gender, q1, q2, q3, q4, q5</code></pre>
 <pre class="r"><code>newdata &lt;- leadership[order(gender, -age),]
 newdata</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;
-## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
-## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young
-## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;     London
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young Washington
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young     London
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young     London
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington</code></pre>
 <pre class="r"><code>detach(leadership)</code></pre>
 </div>
 <div id="union-de-datasets" class="section level3">
@@ -547,21 +552,21 @@ newdata</code></pre>
 <pre class="r"><code>myvars &lt;- names(leadership) %in% c(&quot;q3&quot;, &quot;q4&quot;)
 newdata &lt;- leadership[!myvars]
 names(newdata)</code></pre>
-<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
-## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+<pre><code>##  [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+##  [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;   NA</code></pre>
 <p><strong>Ejemplo 19</strong></p>
 <p>Si conocemos los índices de las columnas también podemos utilizarlas para la exclusión</p>
 <pre class="r"><code>newdata &lt;- leadership[c(-8,-9)]
 names(newdata)</code></pre>
-<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
-## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+<pre><code>##  [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+##  [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;   NA</code></pre>
 <p><strong>Ejemplo 20</strong></p>
 <p>También podemos asignar NULL a la columna y así excluirla del dataframe</p>
 <pre class="r"><code>newdata &lt;- leadership
 newdata$q3 &lt;- newdata$q4 &lt;- NULL
 names(newdata)</code></pre>
-<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
-## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+<pre><code>##  [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+##  [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;   NA</code></pre>
 </div>
 <div id="seleccion-de-registros" class="section level3">
 <h3>Selección de registros</h3>
@@ -569,25 +574,25 @@ names(newdata)</code></pre>
 <p><strong>Ejemplo 21</strong></p>
 <pre class="r"><code>newdata &lt;- leadership[1:3,]
 newdata</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
-## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
-## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young Washington
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young     London</code></pre>
 <pre class="r"><code># which nos retorna los índices donde la operación lógica es TRUE
 newdata &lt;- leadership[which(leadership$gender ==&quot;M&quot; &amp; leadership$age &gt; 30),]
 newdata</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
-## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young     London</code></pre>
 <pre class="r"><code>attach(leadership)</code></pre>
 <pre><code>## The following objects are masked _by_ .GlobalEnv:
 ## 
 ##     age, country, gender, q1, q2, q3, q4, q5</code></pre>
 <pre class="r"><code>newdata &lt;- leadership[which(gender=='M' &amp; age &gt; 30),]
 newdata</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
-## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young     London</code></pre>
 <pre class="r"><code>detach(leadership)</code></pre>
 </div>
 <div id="la-funcion-subset" class="section level3">
@@ -611,13 +616,13 @@ newdata</code></pre>
 <p><strong>Ejemplo 23</strong></p>
 <pre class="r"><code>muestra &lt;- sample(1:10, 3, replace=TRUE)
 muestra</code></pre>
-<pre><code>## [1]  9 10  9</code></pre>
+<pre><code>## [1] 10  7  4</code></pre>
 <pre class="r"><code>mysample &lt;- leadership[sample(1:nrow(leadership), 3, replace=FALSE),]
 mysample</code></pre>
-<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
-## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;
-## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
-## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat         NA
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young Washington
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;     London
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young Washington</code></pre>
 </div>
 <div id="base-de-datos" class="section level3">
 <h3>Base de datos</h3>
