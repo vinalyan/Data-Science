@@ -326,7 +326,7 @@ newdata</code></pre>
 </div>
 <div id="fechas" class="section level3">
 <h3>Fechas</h3>
-<p>Las fechas son típicamente tratadas como cadenas de caracteres que pueden ser transformadas a variables fecha que son almacenadas como numéricas en R. La función para la transformación <code>as.Date</code>. La sintaxis es <code>as.Date(x, &quot;input_format&quot;)</code>, donde <em>x</em> es la fecha en carácter y _input_format es el formato apropiado para la fecha.</p>
+<p>Las fechas son típicamente tratadas como cadenas de caracteres que pueden ser transformadas a variables fecha que son almacenadas como numéricas en R. La función para la transformación <code>as.Date</code>. La sintaxis es <code>as.Date(x, &quot;input_format&quot;)</code>, donde <code>x</code> es la fecha en carácter y <code>input_format</code> es el formato apropiado para la fecha.</p>
 <table>
 <thead>
 <tr class="header">
@@ -369,6 +369,322 @@ newdata</code></pre>
 </tr>
 </tbody>
 </table>
+<p>El formato por defecto de las fechas es yyyy-mm-dd.</p>
+<p><strong>Ejemplo 9</strong></p>
+<pre class="r"><code># ejemplo de vector con fechas (Date)
+mydates &lt;- as.Date(c(&quot;2007-06-22&quot;, &quot;2004-02-13&quot;))
+mydates</code></pre>
+<pre><code>## [1] &quot;2007-06-22&quot; &quot;2004-02-13&quot;</code></pre>
+<p><strong>Ejemplo 10</strong></p>
+<p>Ahora si tenemos en otro formato las fechas en los caracteres, al transformarlas veremos que el formato por defecto prevalece</p>
+<pre class="r"><code># convertir a otro formato de fecha
+strDates &lt;- c(&quot;01/05/1965&quot;, &quot;08/16/1975&quot;)
+dates &lt;- as.Date(strDates, &quot;%m/%d/%Y&quot;)
+dates</code></pre>
+<pre><code>## [1] &quot;1965-01-05&quot; &quot;1975-08-16&quot;</code></pre>
+<p>__ Ejercicio 3__</p>
+<p>Implemente el código necesario que permita cambiar la variable carácter de age del data.frame leadership a un tipo Date</p>
+<pre class="r"><code># 1 linea de código
+leadership$testDate &lt;- as.Date(leadership$testDate, &quot;%m/%d/%y&quot;)
+leadership$testDate</code></pre>
+<pre><code>## [1] &quot;2008-10-24&quot; &quot;2008-10-28&quot; &quot;2008-10-01&quot; &quot;2008-10-12&quot; &quot;2009-05-01&quot;</code></pre>
+<pre class="r"><code># -----------------------------------</code></pre>
+<p><strong>Ejemplo 11</strong></p>
+<p>Podemos usar la función <code>format(X, format=&quot;output_format&quot;)</code> para obtener una fecha en un formato especifico, también, nos sirve para extraer porciones de este.</p>
+<pre class="r"><code>today &lt;- Sys.Date() # obtenemos la fecha del sistema
+format(today, format=&quot;%B %d %Y&quot;)</code></pre>
+<pre><code>## [1] &quot;febrero 08 2019&quot;</code></pre>
+<pre class="r"><code>format(today, format=&quot;%A&quot;)</code></pre>
+<pre><code>## [1] &quot;viernes&quot;</code></pre>
+<p>Para el anterior ejemplo la función <code>format recibió</code> como parámetro un objeto Date en R.</p>
+<p>R almacena internamente una representación del número de días desde Enero 1 de 1970, con valores negativos para fechas menores a este punto. Esto significa que podemos realizar operaciones matemáticas entre fechas, por ejemplo:</p>
+<p><strong>Ejemplo 12</strong></p>
+<pre class="r"><code>startdate &lt;- as.Date(&quot;2004-02-13&quot;)
+enddate &lt;- as.Date(&quot;2011-01-22&quot;)
+days &lt;- enddate - startdate
+days</code></pre>
+<pre><code>## Time difference of 2535 days</code></pre>
+<p>También podemos utilizar la función <code>difftime()</code> para calcular el intervalo de tiempo expresado como segundos, horas, días o semanas.</p>
+<p><strong>Ejercicio 4</strong></p>
+<p>Utilice difftime y calcule el tiempo transcurrido desde su nacimiento hasta hoy y despliéguelo en unidad de semanas.</p>
+<pre class="r"><code>today &lt;- Sys.Date()
+dob &lt;- as.Date(&quot;1989-01-03&quot;)
+difftime(today, dob)</code></pre>
+<pre><code>## Time difference of 10993 days</code></pre>
+<p><strong>Ejemplo 13</strong></p>
+<p>Para convertir un Date a un carácter podemos cambiarla de la siguiente forma</p>
+<pre class="r"><code>strDates &lt;- as.character(dates)
+strDates</code></pre>
+<pre><code>## [1] &quot;1965-01-05&quot; &quot;1975-08-16&quot;</code></pre>
+</div>
+<div id="tipos-de-conversiones" class="section level3">
+<h3>Tipos de conversiones</h3>
+<p>En la sección previa vimos cómo convertir un dato carácter a un objeto Date y vice versa. R provee una serie de funciones que permiten convertir una variable a otro tipo de dato.</p>
+<table>
+<thead>
+<tr class="header">
+<th>convertir</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>as.numeric()</code></td>
+</tr>
+<tr class="even">
+<td><code>as.character()</code></td>
+</tr>
+<tr class="odd">
+<td><code>as.vector</code></td>
+</tr>
+<tr class="even">
+<td><code>as.matrix</code></td>
+</tr>
+<tr class="odd">
+<td><code>as.data.frame()</code></td>
+</tr>
+<tr class="even">
+<td><code>as.factor()</code></td>
+</tr>
+<tr class="odd">
+<td><code>as.logical()</code></td>
+</tr>
+</tbody>
+</table>
+<p><em>Ejemplo 14</em></p>
+<pre class="r"><code>a &lt;- c(1,2,3)
+a</code></pre>
+<pre><code>## [1] 1 2 3</code></pre>
+<pre class="r"><code>is.numeric(a)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is.vector(a)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>print(&quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;&quot;</code></pre>
+<pre class="r"><code>a &lt;- as.character(a)
+is.numeric(a)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>is.vector(a)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is.character(a)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="organizando-datos" class="section level3">
+<h3>Organizando datos</h3>
+<p>Para organizar un data.frame en R podemos utilizar la función <code>order</code> que por defecto organiza los datos de forma ascendente, si pretendemos organizar la variable de manera descendente tenemos que indicarle por parámetro con el signo menos.</p>
+<p><em>Ejemplo 15</em></p>
+<p>Crea un nuevo conjunto de datos que contiene filas ordenadas desde el administrador más joven al administrador más antiguo</p>
+<pre class="r"><code>newdata &lt;- leadership[order(leadership$age),]
+newdata</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;</code></pre>
+<p><em>Ejemplo 16</em></p>
+<p>Creemos un nuevo dataset que contiene las filas ordenadas por el género y la edad, es decir, el orden del abecedario (primero va la letra F para femenino y luego M para masculino) y la edad del administrador desde el más viejo al más joven</p>
+<pre class="r"><code>attach(leadership)</code></pre>
+<pre><code>## The following objects are masked _by_ .GlobalEnv:
+## 
+##     age, country, gender, q1, q2, q3, q4, q5</code></pre>
+<pre class="r"><code>newdata &lt;- leadership[order(gender, -age),]
+newdata</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young</code></pre>
+<pre class="r"><code>detach(leadership)</code></pre>
+</div>
+<div id="union-de-datasets" class="section level3">
+<h3>Unión de datasets</h3>
+<p>Para unir dos data frames (datasets) horizontalmente podemos hacer uso de la función <code>merge()</code>, en la mayoría de casos dos conjuntos de datos se encuentran unidas a través de uno o más variables clave (proceso conocido como <code>inner join</code>) . Un ejemplo de una unión de dos dataframe A y B a través de la variable ID se puede presentar de la siguiente forma:</p>
+<p><code>total &lt;- merge(dataframeA, dataframeB, by=&quot;ID&quot;)</code></p>
+<p>De manera similar podemos juntar los dos elementos por la cantidad de variables en un vector</p>
+<p><code>total &lt;- merge(dataframeA, dataframeB, by=c(&quot;ID&quot;,&quot;Country&quot;))</code></p>
+<p>Si no necesitamos alguna llave que asocie dos data.frames podemos simplemente usar la función <code>cbind()</code> para unirlos horizontalmente. <code>total &lt;- cbind(A, B)</code></p>
+<div id="adicionando-filas" class="section level4">
+<h4>Adicionando filas</h4>
+<p>Para unir dos datasets de forma verticial podemos utilizar la función <code>rbind()</code></p>
+<p><code>total &lt;- rbind(dataframeA, dataframeB)</code></p>
+<p>¡Es importante que ambos conjuntos de datos tengan las mismas variables!</p>
+</div>
+</div>
+</div>
+<div id="subconjunto-de-conjuntos-de-datos" class="section level2">
+<h2>Subconjunto de conjuntos de datos</h2>
+<div id="seleccionado-un-conjunto-de-datos-variables" class="section level3">
+<h3>Seleccionado un conjunto de datos (variables)</h3>
+<p>Es una práctica común crear nuevos datasets con un número limitado de variables de otro conjunto más grande con la finalidad de conservar los datos en bruto para los estudios. Recordemos que una de las formas para acceder a los elementos de un dataset es indicando los índices de las columnas y filas <code>dataframe[row indices, column indices]</code></p>
+<p><strong>Ejercicio 5</strong></p>
+<p>Imprima las variables desde la 6 hasta la 10 del dataframe leadership</p>
+<pre class="r"><code>newdata &lt;- leadership[, c(6:10)]
+newdata</code></pre>
+<pre><code>##   q1 q2 q3 q4 q5
+## 1  5  4  5  5  5
+## 2  3  5  2  5  5
+## 3  3  5  5  5  2
+## 4  3  3  4 NA NA
+## 5  2  2  1  2  1</code></pre>
+<p><strong>Ejemplo 17</strong></p>
+<p>Podemos también realizar la selección indicando los nombres de las columnas a través de un vector</p>
+<pre class="r"><code>myvars &lt;- c(&quot;q1&quot;, &quot;q2&quot;, &quot;q3&quot;, &quot;q4&quot;, &quot;q5&quot;)
+newdata &lt;-leadership[myvars]
+newdata</code></pre>
+<pre><code>##   q1 q2 q3 q4 q5
+## 1  5  4  5  5  5
+## 2  3  5  2  5  5
+## 3  3  5  5  5  2
+## 4  3  3  4 NA NA
+## 5  2  2  1  2  1</code></pre>
+</div>
+<div id="excluyendo-borrando-variables" class="section level3">
+<h3>Excluyendo (borrando) variables</h3>
+<p>Existen varias razones por las cuales podríamos excluir variables, un ejemplo seria la cantidad de datos faltantes. Veamos las distintas formas que nos permitan excluir las variables.</p>
+<p><strong>Ejemplo 18</strong></p>
+<p>Podemos excluir las variables q3 y q4 con el siguiente ejemplo</p>
+<pre class="r"><code>myvars &lt;- names(leadership) %in% c(&quot;q3&quot;, &quot;q4&quot;)
+newdata &lt;- leadership[!myvars]
+names(newdata)</code></pre>
+<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+<p><strong>Ejemplo 19</strong></p>
+<p>Si conocemos los índices de las columnas también podemos utilizarlas para la exclusión</p>
+<pre class="r"><code>newdata &lt;- leadership[c(-8,-9)]
+names(newdata)</code></pre>
+<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+<p><strong>Ejemplo 20</strong></p>
+<p>También podemos asignar NULL a la columna y así excluirla del dataframe</p>
+<pre class="r"><code>newdata &lt;- leadership
+newdata$q3 &lt;- newdata$q4 &lt;- NULL
+names(newdata)</code></pre>
+<pre><code>## [1] &quot;ID&quot;       &quot;testDate&quot; &quot;country&quot;  &quot;gender&quot;   &quot;age&quot;      &quot;q1&quot;      
+## [7] &quot;q2&quot;       &quot;q5&quot;       &quot;agecat&quot;</code></pre>
+</div>
+<div id="seleccion-de-registros" class="section level3">
+<h3>Selección de registros</h3>
+<p>La selección o la exclusión de observaciones es actividad típica y clave para un análisis éxito en los datos, observemos algunos ejemplos</p>
+<p><strong>Ejemplo 21</strong></p>
+<pre class="r"><code>newdata &lt;- leadership[1:3,]
+newdata</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
+## 3  3 2008-10-01      UK      F  25  3  5  5  5  2  Young</code></pre>
+<pre class="r"><code># which nos retorna los índices donde la operación lógica es TRUE
+newdata &lt;- leadership[which(leadership$gender ==&quot;M&quot; &amp; leadership$age &gt; 30),]
+newdata</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young</code></pre>
+<pre class="r"><code>attach(leadership)</code></pre>
+<pre><code>## The following objects are masked _by_ .GlobalEnv:
+## 
+##     age, country, gender, q1, q2, q3, q4, q5</code></pre>
+<pre class="r"><code>newdata &lt;- leadership[which(gender=='M' &amp; age &gt; 30),]
+newdata</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young
+## 4  4 2008-10-12      UK      M  39  3  3  4 NA NA  Young</code></pre>
+<pre class="r"><code>detach(leadership)</code></pre>
+</div>
+<div id="la-funcion-subset" class="section level3">
+<h3>La función subset()</h3>
+<p>La función subset nos facilita la forma para seleccionar un subconjunto de un dataframe, en este debemos indicar los datos, el operador lógico y la selección de las columnas.</p>
+<p><strong>Ejemplo 22</strong></p>
+<pre class="r"><code>newdata &lt;- subset(leadership, age &gt;= 35 | age &lt; 24, select=c(q1, q2, q3, q4))
+newdata</code></pre>
+<pre><code>##   q1 q2 q3 q4
+## 2  3  5  2  5
+## 4  3  3  4 NA</code></pre>
+<pre class="r"><code>newdata &lt;- subset(leadership, gender==&quot;M&quot; &amp; age &gt; 25, select=gender:q4)
+newdata</code></pre>
+<pre><code>##   gender age q1 q2 q3 q4
+## 1      M  32  5  4  5  5
+## 4      M  39  3  3  4 NA</code></pre>
+</div>
+<div id="ejemplos-aleatorios" class="section level3">
+<h3>Ejemplos aleatoríos</h3>
+<p>En algunas ocasiones será necesario realizar muestras aleatorias para análisis predictivos, para ello R nos facilita la función sample()</p>
+<p><strong>Ejemplo 23</strong></p>
+<pre class="r"><code>muestra &lt;- sample(1:10, 3, replace=TRUE)
+muestra</code></pre>
+<pre><code>## [1]  9 10  9</code></pre>
+<pre class="r"><code>mysample &lt;- leadership[sample(1:nrow(leadership), 3, replace=FALSE),]
+mysample</code></pre>
+<pre><code>##   ID   testDate country gender age q1 q2 q3 q4 q5 agecat
+## 5  5 2009-05-01      UK      F  NA  2  2  1  2  1   &lt;NA&gt;
+## 2  2 2008-10-28      US      F  45  3  5  2  5  5  Young
+## 1  1 2008-10-24      US      M  32  5  4  5  5  5  Young</code></pre>
+</div>
+<div id="base-de-datos" class="section level3">
+<h3>Base de datos</h3>
+<p>Debido a la amplia gama de tecnologías de base de datos y a la importancia de procesar la mayor cantidad de información; es importante conocer los mecanismos (interfaces) con los cuales podamos integrar los distintos sistemas de información con R, ya que será el medio con el que podremos consultar y procesar los datos que serán luego utilizados en las actividades de la ciencia de datos.</p>
+<div id="mysql" class="section level4">
+<h4>MySQL</h4>
+<div class="figure">
+<img src="data:image/jpeg;base64,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" />
+
+</div>
+<p>MYSQL es un sistema de gestión de base de datos relacional. Una de las tecnologías de mayor acogida en el soluciones web (por ejemplo, Joomla, Wordpress y Drupal).</p>
+<p>Existen diversas interfaces de programación de aplicaciones que permiten el acceso a MySQL a distintos lenguajes de programación de programación, por ejemplo, C, C++, Python, Java y R.</p>
+<p>Para la interacción de R y MySQL es necesario contar el paquete RMySQL en nuestro entorno de trabajo de R. Es importante tener previamente instalado el sistema de base de datos MySQL en nuestro equipo (por ejemplo, MySQL WorkBench). <a href="https://dev.mysql.com/downloads" class="uri">https://dev.mysql.com/downloads</a></p>
+<p>A continuación, se enuncian algunos comandos a tener en cuenta para la configuración y acceso de un usuario a través del paquete RMySQL.</p>
+<p>Existen distintas formas para crear un usuario en el MySQL workbench, para nuestro caso dejaremos un ejemplo de un script en SQL para la creación de un usuario con privilegios sobre un SCHEMA</p>
+<pre><code>CREATE USER 'username'@'localhost' IDENTIFIED BY 'SomethingDifficult';
+GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE, SHOW VIEW ON database_name.* TO 'username'@'localhost';</code></pre>
+<p>Es importante que el tipo de autenticación sea tipo “Standard”, para lograr esto se puede digitar el siguiente script en SQL</p>
+<pre><code>ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'SomethingDifficult';</code></pre>
+</div>
+</div>
+<div id="paquetes-para-mysql" class="section level3">
+<h3>Paquetes para MySQL</h3>
+<p>Instalación de paquetes necesarios para el desarrollo de las sesiones</p>
+<p>Cargar los paquetes</p>
+<pre class="r"><code>library(RMySQL)</code></pre>
+<pre><code>## Loading required package: DBI</code></pre>
+<p>Vamos a conectarnos a través de R a la base de datos MySQL, para ello será necesario utilizar los métodos de RMySQL para definir los datos de nuestra cuenta y contraseña.</p>
+<pre class="r"><code># definición de la variable para el password
+# dbname es el nombre de la base de datos creada en el sistema de base de datos MySQL
+# host es el parámetro que define la dirección donde se encuentra hospedada la base de datos, para nuestro caso será en nuestro equipo local &quot;localhost&quot;
+localuserpassword &lt;- &quot;SomethingDifficult&quot;
+#dbConnect es el método que nos permite conectarnos a la base de datos MySQL
+#?dbConnect
+storiesDb &lt;- dbConnect(MySQL(), user='username', password=localuserpassword, dbname='sakila', host='localhost')
+# La siguiente linea despliega las tablas de la base de datos cargada
+dbListTables(storiesDb)</code></pre>
+<pre><code>##  [1] &quot;actor&quot;                      &quot;actor_info&quot;                
+##  [3] &quot;address&quot;                    &quot;category&quot;                  
+##  [5] &quot;city&quot;                       &quot;country&quot;                   
+##  [7] &quot;customer&quot;                   &quot;customer_list&quot;             
+##  [9] &quot;film&quot;                       &quot;film_actor&quot;                
+## [11] &quot;film_category&quot;              &quot;film_list&quot;                 
+## [13] &quot;film_text&quot;                  &quot;inventory&quot;                 
+## [15] &quot;language&quot;                   &quot;nicer_but_slower_film_list&quot;
+## [17] &quot;payment&quot;                    &quot;rental&quot;                    
+## [19] &quot;sales_by_film_category&quot;     &quot;sales_by_store&quot;            
+## [21] &quot;staff&quot;                      &quot;staff_list&quot;                
+## [23] &quot;store&quot;</code></pre>
+<pre class="r"><code># Vamos ahora a pasar la base de datos cargada a un data.frame,&lt; el parámetro name define el nombre de la tabla a procesar
+actor_df &lt;- dbReadTable(conn = storiesDb, name = 'actor')</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 0 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): unrecognized MySQL field type 7 in
+## column 3 imported as character</code></pre>
+<pre class="r"><code>head(actor_df)</code></pre>
+<pre><code>##   actor_id first_name    last_name         last_update
+## 1        1   PENELOPE      GUINESS 2006-02-15 04:34:33
+## 2        2       NICK     WAHLBERG 2006-02-15 04:34:33
+## 3        3         ED        CHASE 2006-02-15 04:34:33
+## 4        4   JENNIFER        DAVIS 2006-02-15 04:34:33
+## 5        5     JOHNNY LOLLOBRIGIDA 2006-02-15 04:34:33
+## 6        6      BETTE    NICHOLSON 2006-02-15 04:34:33</code></pre>
+<pre class="r"><code># dbDisconnect es el método que nos permite terminar la conexión con la base de datos
+#?dbDisconnect
+dbDisconnect(storiesDb ) </code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
 </div>
 <div id="referencias" class="section level2">
@@ -376,7 +692,6 @@ newdata</code></pre>
 <ul>
 <li>Murrel, p. (2005). R in Action.</li>
 </ul>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
 </div>
 </div>
 
