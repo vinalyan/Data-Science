@@ -1,0 +1,113 @@
+---
+title: "Basic Statistics"
+author: "Christian Urcuqui"
+date: "21 de febrero de 2019"
+output: html_document
+---
+
+Unidades de a revisar en este notebook:
+
++ Distribución de probabilidad normal 
++ Distribución de probabilidad t-student
++ Distribución de probabilidad Chi-cuadrado
++ Intervalos de confianza
++ Pruebas de hipótesis
++ ANOVA de una vía
++ Tamaño de una muestra
+
+```{r librerias, message=FALSE}
+#install.packages("caret")
+#install.packages("Hmisc")
+library(caret)
+library(Hmisc)
+```
+
+
+## Distribución de probabilidad normal 
+
+
+### Estadísticos descriptivos
+
+Vamos a revisar las medidas de tendencia central, variabilidad y de distribución para _variables continuas_. Analizaremos estas medidas con el dataset de Motor Trend Road Tests (mtcars), nuestro enfoque se centrará sobre las variables que representan las millas por galón (mpg), los caballos de fuerza (hp), y peso (wt).
+
+
+```{r cars}
+vars <- c("mpg", "hp", "wt")
+head(mtcars[vars])
+```
+Existen distintas funciones que nos permiten obtener un conjunto de estadísticos descriptivos, en primer lugar, podemos encontrar en la instalación base la función summary(), veamos el ejemplo
+
+_Ejemplo 1_
+
+```{r example1}
+summary(mtcars[vars])
+```
+
+Como podemos ver en el ejemplo, la función nos permite obtener el valor mínimo, el primer cuartil, la mediana, la media, el tercer cuartil y el valor máximo por cada variable cuantitativa y las frecuencias para los factores y los vectores lógicos.
+
+Otra forma es utilizar la funciones apply() o sapply() que permite seleccionar los estadísticos descriptivos que nosotros quisiéramos utilizar.
+
+_Ejemplo 2_
+
+```{r example2}
+# definimos una función con el nombre mystats
+mystats <- function(x, na.omit=FALSE){
+  if(na.omit)
+    x <- x[!is.na(x)] # validamos los valores na con con el parámetro
+  m <- mean(x)
+  n <- length(x)
+  s <- sd(x)
+  skew <- sum((x-m)^3/s^3)/n  # sesgo
+  kurt <- sum((x-m)^4/s^4)/n - 3 # curtosis
+  ma <- max(x) # maximo
+  mi <- min(x) #minimo
+  return(c(n=n, mean=m, stdev=s, skew=skew, kurtosis=kurt, maximo = ma, minimo = mi))
+}
+sapply(mtcars[vars], mystats)
+
+# podemos obtener la moda 
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+```
+
+Para estas variables tenemos distintos estadisticos descriptivos, por ejemplo para mpg tenemos:
++ una desviación estándar de 6.0
++ una distribución con sesgo hacia la derecha (+0.61)
++ algo más plana que una distribución normal (-0.37)
+
+
+<img src="http://1.bp.blogspot.com/_mA-bypZU_yA/ScfGYolZY3I/AAAAAAAAAA4/g4__2B4EJ4c/s320/image028.gif" />
+
+
+```{r plot1}
+# veamos el plot de la distribución 
+ggplot(mtcars) +
+  geom_density(mapping = aes(x=mpg)) + 
+  geom_vline(xintercept = median(mtcars$mpg), col="red", lwd=1, lty=3) + 
+  geom_vline(xintercept = mean(mtcars$mpg), col="blue", lwd=1, lty=3) +
+  geom_vline(xintercept = getmode(mtcars$mpg), col="green",lwd=1, lty=3)
+
+```
+
+Existen un conjunto de paquetes que también permiten descrubir más estadísticos descriptivos, entre estos podemos encontrar Hmisc, pastecs, y psych. Vamos a utilizar la función describe() del paquete Hmisc retorna el número de variables y observaciones, el número de valores faltantes y únicos, la media, los cuartiles y cinco valores máximos y mínimos.
+
+```{r example3}
+plot(pressure)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Referencias
+
++ 
