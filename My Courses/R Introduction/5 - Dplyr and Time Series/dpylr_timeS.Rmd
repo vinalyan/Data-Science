@@ -1,0 +1,185 @@
+---
+title: "Dplyr and Time Series"
+author: "Christian Urcuqui"
+date: "26 de febrero de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Tratamiento de datos relacionales con dplyr
+
+Las relaciones siempre están definidas como un par de tablas, todas relacionadas a través de una o más variables. Entre algunas operaciones para datos relacionales podemos encontrar:
+
++ Uniones, una o más variables son asignadas a un nuevo data frame desde las observaciones de otro
++ filtros, se filtran observaciones de un data frame a través de una operación lógica 
++ conjunto de operaciones, tratamiento de observaciones basado en una operación 
++ Reordenar las filas 
++ Crear nuevas variables a partir de un conjunto de funciones y variables
++ Seleccionar variables a través de sus nombres
++ Resumir los valores de un conjunto de variables
+
+Es común utilizar datos relacionados en un sistema de base de datos relacional (RDBMS), un ejemplo de estos sistemas es el que está bajo la tecnología de SQL de ORACLE. Para R podemos encontrar el paquete dplyr que nos facilita un conjunto de funciones (operaciones) sobre datos relaciones.
+
+
+
+```{r librerias, message=FALSE}
+#install.packages("tidyverse")
+#install.packages("nycflights13")
+library(tidyverse)
+library(nycflights13)
+```
+
+Veamos las operaciones básicas que el paquete dplyr nos brinda en el dataset de vuelos
+
+### Filtro de filas con filter()
+
+filter() nos permite obtener un subconjunto de observaciones basado en el parametro que le ingresemos. 
+
+```
+filter(Data.frame, operaciones lógicas)
+```
+
+_Ejemplo 1_
+
+Uso de filter() para obtener los vuelos realizados entre las aerolineas terminadas en HA o B6 
+```{r example1, message=FALSE}
+filter(nycflights13::flights, carrier=="HA" | carrier=="B6")
+```
+
+_Ejercicio 1_
+
+Obtenga los datos de los vuelos con el valor más grande en la distancia recorrida entre aeropuertos.
+
+__Recordatorio: existen funciones del paquete base que les permiten calcular el valor mínimo  y máximo de un vector__
+
+```{r ejercicio1}
+#1 linea de código
+filter(nycflights13::flights, max(distance)==distance)
+# -----------------------
+```
+
+_Ejercicio 2_
+
+¿Es siempre el mismo vuelo? ¿cuáles son los orígenes y destinos?
+
+__Recomendación: vean el significado de los códigos contra el dataset airports {nycflights13}__
+
+R/
+
+```{r ejercicio2, message=FALSE, warning=FALSE}
+
+summary(filter(nycflights13::flights, max(distance)==distance)$dest)
+class(filter(nycflights13::flights, max(distance)==distance))
+summary(factor(filter(nycflights13::flights, max(distance)==distance)$dest))
+destino <- factor(filter(nycflights13::flights, max(distance)==distance)$dest)
+summary(factor(filter(nycflights13::flights, max(distance)==distance)$origin))
+origen <- factor(filter(nycflights13::flights, max(distance)==distance)$origin)
+filter(nycflights13::airports,faa == as.character(origen) | faa == as.character(destino))
+
+```
+Tenga cuidado al utilizar operaciones lógicas de igualdad en R. En muchas ocasiones se utiliza = en vez de ==, es usual que este inconveniente suceda por lo tanto R le notificara con un mensaje de error
+
+_Ejemplo 2_
+
+```{r ejemplo2, error=TRUE}
+filter(flights, month = 1)
+```
+
+Las computadoras utilizan aritmética de operación finita, es decir, no se almacenan números con infinitos números de dígitos, por lo tanto, recuerde que cada número es una aproximación. En vez de usar ==, utilice la función near() que permite comparar dos vectores con números decimales: 
+
+_Ejemplo 3_
+
+```{r ejemplo3}
+sqrt(2) ^ 2 == 2
+near(sqrt(2) ^ 2, 2)
+
+```
+
+## Operaciones lógicas
+
+Como hemos visto, los filtros pueden tener operaciones lógicas enlazadas, recordemos algunas de estas con su respectiva representación en R.
+
+
+<img src="https://d33wubrfki0l68.cloudfront.net/01f4b6d39d2be8269740a3ad7946faa79f7243cf/8369a/diagrams/transform-logical.png" width="450" />
+
+Vamos ahora a filtrar los vuelos realizados entre el mes de noviembre o diciembre a través de una forma más eficiente ya que permite realizar búsquedas  mucho más especificas
+
+_Ejemplo 4_
+
+```{r ejemplo4}
+nov_dec <- filter(flights, month %in% c(11, 12))
+```
+
+
+## Valores faltantes
+
+Una caracteristica importante de R que se puede generar molestias en una comparación son los valores faltantes (missing value) o NAs (Not Availables).
+
+_Ejemplo 5_
+
+Observe los resultados de las operaciones que se realizan contra NA
+
+```{r ejemplo5}
+NA > 5
+10 == NA
+NA + 10
+NA / 2
+NA == NA
+```
+Si queremos determinar si un valor es NA podemos utilizar la función is.na()
+
+_Ejemplo 6_
+```{r ejemplo6}
+x <- NA
+is.na(x)
+```
+
+_Ejercicio 3_
+
+Utilice la función filter() y obtenga los valores que no son NA
+
+```{r ejemplo3}
+x <- data.frame(c(seq(1,5), NA, seq(1,5), NA))
+# 1 linea de código
+filter(x, !is.na(x))
+# -----------
+```
+Recuerde que esta misma operación la puede realizar a través del filtro sobre el mismo data frame
+
+```
+x[!is.na(x)]
+```
+_Ejercicio 4_
+
+Encuentre todos los vuelos que llegaron dos o más horas tarde.
+
+```{r ejercicio4}
+
+# 1 linea de código
+filter(flights, hour>=2)
+# -----------
+```
+
+_Ejercicio 5_
+
+Encuentre todos los vuelos que operaron con United, American, o Delta
+__Recomendación: revise la función grepl__
+
+```{r ejemplo5}
+filter(flights, carrier == filter(airlines, grepl("American", airlines$name))$carrier | carrier ==  filter(airlines, grepl("United", airlines$name))$carrier | carrier == filter(airlines, grepl("Delta", airlines$name))$carrier)
+# -----------
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
