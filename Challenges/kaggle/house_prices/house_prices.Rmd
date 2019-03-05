@@ -1,0 +1,101 @@
+---
+title: "House_prices"
+author: "Christian Urcuqui"
+date: "4 de marzo de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# configuremos nuestro entorno de trabajo
+knitr::opts_knit$set(root.dir = "D:/Usuarios/rhaps/Documents/Challenges/kaggle/house_prices")
+```
+
+# House Prices: Advanced Regression Techniques 
+
+Este notebook busca aplicar las técnicas de exploración de datos para el entrenamiento de modelos predictivos para el precio de las casas de la competencia "House Prices"" de Kaggle.
+```
+https://www.kaggle.com/c/house-prices-advanced-regression-technique
+```
+
+En primer lugar, configuraremos nuestro entorno de trabajo y las librerías que utilizaremos
+```{r configuraciones}
+# Configuremos nuestro directorio de trabajo
+#setwd(choose.dir())
+setwd("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase3")
+# Observe primero el formato de los csv  
+# carguemos los datos de entrenamiento y testeo con los factores como caracteres
+train <-read.csv(file.choose(), stringsAsFactors=FALSE)
+test <-read.csv(file.choose(), stringsAsFactors=FALSE) 
+```
+
+## Dimensiones de la base de datos
+
+Aplique las funciones head() y tail() sobre el conjunto de train
+
+Diapositiva 17
+```{r dimensiones}
+# las primeras y últimas filas de la bd
+head(train)
+tail(train)
+```
+
+## Cambiar los nombres de variables 
+
+diapositiva 18
+```{r nombresC}
+train2 <- train
+colnames(train2)<- tolower(colnames(train2))
+```
+
+## Tipos de variables
+
+Vamos a transformar algunas de las variables a categóricas, es decir, a nominales, ordinales y binarias
+
+diapositiva 20
+```{r tipos}
+# veamos los tipos de variables que existen
+str(train2)
+```
+
+## Transformando los tipos de las variables
+
+Debe tener cuidado con los niveles de los factores, cerciórese con el diccionario de variables
+
+Diapositiva 22
+```{r transformacionV}
+train2$mssubclass <- factor(train2$mssubclas)
+train2$mszoning <- factor(train2$mszoning)
+train2$street <-factor(train2$street)
+train2$alley <-factor(train2$alley)
+train2$lotshape <- factor(train2$lotshape, levels=c("IR3","IR2","IR1","Reg"), ordered=TRUE)
+train2$landcontour <- factor(train2$landcontour)
+train2$utilities <- factor(train2$utilities)
+train2$lotconfig <- factor(train2$lotconfig)
+train2$landslope <- factor(train2$landslope)
+train2$neighborhood <-factor(train2$neighborhood)
+train2$condition1 <- factor(train2$condition1)
+train2$condition2 <- factor(train2$condition2)
+train2$bldgtype <-factor(train2$bldgtype)
+train2$housestyle <- factor(train$HouseStyle)
+train2$overallqual <- factor(train2$overallqual, levels=c(1,2,3,4,5,6,7,8,9,10), ordered=TRUE)
+train2$overallcond <- factor(train2$overallcond, levels=c(1,2,3,4,5,6,7,8,9,10), ordered=TRUE)
+train$YearBuilt <- as.character(train$YearBuilt)
+train2$yearremodadd <- as.character(train$yearremodadd)
+train2$roofstyle <- factor(train2$roofstyle)
+train2$roofmatl <- factor(train2$roofmatl)
+train2$exterior1st <- factor(train2$exterior1st)
+train2$exterior2nd <- factor(train2$exterior2nd)
+train2$masvnrtype <- factor(train2$masvnrtype)
+train2$exterqual <- factor(train2$exterqual, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$extercond <- factor(train2$extercond, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$foundation <- factor(train2$foundation)
+train2$bsmtqual <- factor(train2$extercond, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$bsmtcond <- factor(train2$bsmtcond, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$bsmtexposure <- factor(train2$bsmtexposure)
+train2$bsmtfintype1 <- factor(train2$bsmtfintype1, levels=c("NA","Unf","LwQ","Rec", "BLQ", "ALQ", "GLQ"), ordered=TRUE)
+train2$bsmtfintype2 <- factor(train2$bsmtfintype2, levels=c("NA","Unf","LwQ","Rec", "BLQ", "ALQ", "GLQ"), ordered=TRUE)
+train2$heating <- factor(train2$heating)
+
+
+
+```
