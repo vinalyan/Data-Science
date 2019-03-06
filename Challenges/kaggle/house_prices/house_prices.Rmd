@@ -21,7 +21,7 @@ En primer lugar, configuraremos nuestro entorno de trabajo y las librerías que u
 ```{r configuraciones}
 # Configuremos nuestro directorio de trabajo
 #setwd(choose.dir())
-setwd("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase3")
+#setwd("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase3")
 # Observe primero el formato de los csv  
 # carguemos los datos de entrenamiento y testeo con los factores como caracteres
 train <-read.csv(file.choose(), stringsAsFactors=FALSE)
@@ -79,8 +79,10 @@ train2$bldgtype <-factor(train2$bldgtype)
 train2$housestyle <- factor(train$HouseStyle)
 train2$overallqual <- factor(train2$overallqual, levels=c(1,2,3,4,5,6,7,8,9,10), ordered=TRUE)
 train2$overallcond <- factor(train2$overallcond, levels=c(1,2,3,4,5,6,7,8,9,10), ordered=TRUE)
-train$YearBuilt <- as.character(train$YearBuilt)
-train2$yearremodadd <- as.character(train$yearremodadd)
+train2$YearBuilt <- as.character(train2$YearBuilt)
+train2$yearremodadd <- as.character(train2$yearremodadd)
+train2$yrsold <- as.character(train2$yrsold)
+train2$mosold <- as.character(train2$mosold)
 train2$roofstyle <- factor(train2$roofstyle)
 train2$roofmatl <- factor(train2$roofmatl)
 train2$exterior1st <- factor(train2$exterior1st)
@@ -95,7 +97,23 @@ train2$bsmtexposure <- factor(train2$bsmtexposure)
 train2$bsmtfintype1 <- factor(train2$bsmtfintype1, levels=c("NA","Unf","LwQ","Rec", "BLQ", "ALQ", "GLQ"), ordered=TRUE)
 train2$bsmtfintype2 <- factor(train2$bsmtfintype2, levels=c("NA","Unf","LwQ","Rec", "BLQ", "ALQ", "GLQ"), ordered=TRUE)
 train2$heating <- factor(train2$heating)
-
+train2$heatingqc <- factor(train2$heatingqc, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$centralair <- factor(train2$centralair)
+train2$electrical <- factor(train2$electrical)
+train2$kitchenqual <- factor(train2$kitchenqual, levels=c("Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$functional <- factor(train2$functional)
+train2$fireplacequ <- factor(train2$fireplacequ, levels=c("NA","Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$garagetype <- factor(train2$garagetype)
+train2$garagefinish <- factor(train2$garagefinish)
+train2$garagequal <- factor(train2$fireplacequ, levels=c("NA","Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$garagecond <- factor(train2$garagecond, levels=c("NA","Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$paveddrive <- factor(train2$paveddrive)
+train2$poolqc <- factor(train2$poolqc, levels=c("NA","Po","Fa","TA","Gd", "Ex"), ordered=TRUE)
+train2$fence <- factor(train2$fence, levels=c("NA","MnWw","GdWo","MnPrv","GdPrv"), ordered=TRUE)
+train2$miscfeature <- factor(train2$miscfeature)
+train2$saletype <- factor(train2$saletype)
+train2$salecondition <- factor(train2$salecondition)
+train2$garageyrblt <- as.character(train2$garageyrblt)
 
 
 ```
