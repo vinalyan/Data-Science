@@ -137,6 +137,7 @@ train2$garageyrblt <- as.character(train2$garageyrblt)
 Diapositiva 28
 ```{r duplicadas}
 # ¿cuantos id hay duplicados?
+# realmente es dificil determinar en esta base de datos un conjunto de valores repetidos
 table(is.na(train2))
 ```
 
@@ -202,6 +203,10 @@ describe(train2[!is.na(train2$lotfrontage),]$lotfrontage)
 print("estadisticos descriptivos  - masvnrarea")
 describe(train2[!is.na(train2$masvnrarea),]$masvnrarea)
 
+# cantidad de datos perdidos en las fechas
+table(is.na(train2$garageyrblt))
+
+
 # diapositiva 41
 # toma de decisiones de las variables
 train_masvnrarea <- train2 %>% 
@@ -209,7 +214,10 @@ train_masvnrarea <- train2 %>%
 train2 <- train2 %>% 
   filter(!is.na(lotfrontage)) %>%
   filter(!is.na(masvnrarea)) %>%
-  filter(!is.na(electrical)) 
+  filter(!is.na(electrical)) %>%
+  filter(!is.na(garageyrblt))
+
+
 
 ```
 
