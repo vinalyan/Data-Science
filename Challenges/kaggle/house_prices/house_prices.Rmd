@@ -26,7 +26,7 @@ library(dplyr)
 # Observe primero el formato de los csv  
 # carguemos los datos de entrenamiento y testeo con los factores como caracteres
 #train <-read.csv(file.choose(), stringsAsFactors=FALSE)
-train <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase3/train.csv", stringsAsFactors=FALSE)
+train <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase3/train_clase.csv", stringsAsFactors=FALSE)
 test <-read.csv(file.choose(), stringsAsFactors=FALSE) 
 ```
 
@@ -37,6 +37,7 @@ test <-read.csv(file.choose(), stringsAsFactors=FALSE)
 library(dplyr)
 library(ggplot2)
 library(psych)
+library(stringr)
 ```
 ## Dimensiones de la base de datos
 
@@ -57,7 +58,38 @@ train2 <- train
 colnames(train2)<- tolower(colnames(train2))
 ```
 
-## Tipos de variables
+
+## Observaciones duplicadas
+
+diapositiva 28
+```{r duplicadas}
+# la variable más sensible a tener datos duplicados es el identificador
+train2[duplicated(train2$id),]
+# eliminemos los registros duplicados 
+train2 <- train2[!duplicated(train2),]
+```
+
+## Errores de digitación
+
+Diapositiva 
+```{r digitacion}
+# exploremos los errores en las variables street y lotconfig
+table(factor(train2$street)) # dato mal digitado - v versus b
+table(factor(train2$lotconfig)) # dato mal digitado - minuscula
+levels(factor(train2$lotconfigl))
+
+# corrección de los problemas
+train2[train2$street=="Pabe",]$street <- "Pave"
+train2[train2$lotconfig=="Fr3",]$lotconfig <- "FR3"
+train2$street <- str_trim(train2$street)
+table(factor(train2$street)) # ver corrección 
+table(factor(train2$lotconfig)) # ver corrección
+```
+
+
+## No correspondencia entre el formato de la variable y su tipo
+
+Carga por defecto
 
 Vamos a transformar algunas de las variables a categóricas, es decir, a nominales, ordinales y binarias
 
@@ -67,11 +99,7 @@ diapositiva 20
 str(train2)
 ```
 
-
-
-Carga por defecto
-
-## Transformando los tipos de las variables
+_Transformando los tipos de las variables_
 
 Debe tener cuidado con los niveles de los factores, cerciórese con el diccionario de variables
 
@@ -252,5 +280,16 @@ print("variable fence")
 summary(train2$fence)
 print("variable poolqc")
 summary(train2$poolqc)
+
+```
+
+## Valores fuera del rango - creando nuevas variables 
+
+```{r fuerarango}
+ggplot(train2) + 
+  geom_boxplot(mapping = aes(y=lotfrontage, x=lotfrontage))
+
+ggplot(train2) + 
+  geom_boxplot(mapping = aes(y=masvnrarea, x=masvnrarea))
 
 ```
