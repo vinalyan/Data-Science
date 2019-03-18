@@ -1,0 +1,526 @@
+---
+title: "Datajam2019"
+author: "Christian Urcuqui"
+date: "14 de marzo de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# DataJam 2019 -  Seguridad ciudadana
+
+
+```{r librerias}
+library(ggplot2)
+library(gmodels)
+library(dplyr)
+library(readxl)
+library(GGally)
+library(readr)
+library(stringr)
+library(ggmap)
+library(colmaps)
+```
+
+Vamos a explorar la respuesta  las siguientes pregunta para el año 2017
+
+¿Cuales son los municipios que menos y más han presentado reportes de delitos?
+¿Donde esta ubicado Cali en este ranking?
+
+
+## Vamos a cargar las diferentes bases de datos 2017
+
+
+
+Las bases de datos que se exploraron con fin de responder la pregunta ¿Cuáles son las variables 
+de comunidades con baja tasa de criminalidad, y cómo promover su replicabilidad?
+
++ Violencia
+  + 5 Datasets
++ Dane / censo poblacional
++ Información de la Alcaldía de Cali (Información no estructurada)
++ Encuesta de Transición de la Escuela al Trabajo
+
+```{r bd, echo=FALSE, warning=FALSE, message=FALSE}
+Cod_0010_Delitos_sexuales_2017 <- read_csv("~/GitHub/seguridad_ciudadana/Reto3/1. Violencia/Cod_0010_Delitos_sexuales_2017.csv")
+Cod_0018_Delitos_Homicidios_2017 <- read_csv("~/GitHub/seguridad_ciudadana/Reto3/1. Violencia/Cod_0018_Delitos Homicidios_2017.csv")
+Cod_0026_Delito_Hurto_a_personas_2017 <- read_csv("~/GitHub/seguridad_ciudadana/Reto3/1. Violencia/Cod_0026_Delito_Hurto_a_personas_2017.csv")
+Cod_0035_Delito_Violencia_intrafamiliar_2018 <- read_csv("~/GitHub/seguridad_ciudadana/Reto3/1. Violencia/Cod_0035_Delito_Violencia_intrafamiliar_2018.csv")
+Extorsi_n_2017 <- read_csv("~/GitHub/seguridad_ciudadana/Reto3/1. Violencia/Extorsi_n_2017.csv")
+Municipal_area_1985_2020 <- read_excel("~/GitHub/seguridad_ciudadana/Reto3/Municipal_area_1985-2020 - copia.xls")
+
+# ELIMINAR NAs
+
+table(is.na(Cod_0010_Delitos_sexuales_2017))
+
+Cod_0010_Delitos_sexuales_2017 <- na.omit(Cod_0010_Delitos_sexuales_2017)
+Cod_0018_Delitos_Homicidios_2017 <- na.omit(Cod_0018_Delitos_Homicidios_2017)
+Cod_0026_Delito_Hurto_a_personas_2017 <- na.omit(Cod_0026_Delito_Hurto_a_personas_2017)
+Extorsi_n_2017 <- na.omit(Extorsi_n_2017)
+Cod_0035_Delito_Violencia_intrafamiliar_2018 <-na.omit(Cod_0035_Delito_Violencia_intrafamiliar_2018)
+
+table(is.na(Cod_0010_Delitos_sexuales_2017))
+table(is.na(Cod_0018_Delitos_Homicidios_2017))
+table(is.na(Cod_0026_Delito_Hurto_a_personas_2017))
+table(is.na(Extorsi_n_2017))
+table(is.na(Cod_0035_Delito_Violencia_intrafamiliar_2018))
+```
+
+Integración con la base de datos de población del DANE
+
+```{r bdI, echo=FALSE}
+municipal2017 <- Municipal_area_1985_2020[,c('MPIO','2017')]
+colnames(municipal2017) <- c("Municipio","POBLACION")
+municipal2017$Municipio <- toupper(municipal2017$Municipio)
+
+# tildes
+municipal2017$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',municipal2017$Municipio)
+Cod_0010_Delitos_sexuales_2017$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',Cod_0010_Delitos_sexuales_2017$Municipio)
+Cod_0018_Delitos_Homicidios_2017$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',Cod_0018_Delitos_Homicidios_2017$Municipio)
+Cod_0026_Delito_Hurto_a_personas_2017$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',Cod_0026_Delito_Hurto_a_personas_2017$Municipio)
+Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio)
+Extorsi_n_2017$Municipio <- chartr('ÁÉÍÓÚ','AEIOUN',Extorsi_n_2017$Municipio)
+
+
+# CARACTERES EXTRAÑOS
+
+
+# filtro de las CT
+#gsub(" (CT)", "",Cod_0010_Delitos_sexuales_2017$Municipio)
+Cod_0010_Delitos_sexuales_2017$Municipio <- gsub(" (CT)", "", fixed=TRUE, Cod_0010_Delitos_sexuales_2017$Municipio)
+Cod_0018_Delitos_Homicidios_2017$Municipio <- gsub(" (CT)", "", fixed=TRUE, Cod_0018_Delitos_Homicidios_2017$Municipio)
+Cod_0026_Delito_Hurto_a_personas_2017$Municipio <- gsub(" (CT)", "", fixed=TRUE, Cod_0026_Delito_Hurto_a_personas_2017$Municipio)
+Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio <- gsub(" (CT)", "", fixed=TRUE, Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio)
+Extorsi_n_2017$Municipio <- gsub(" (CT)", "", fixed=TRUE, Extorsi_n_2017$Municipio)
+
+
+Cod_0010_Delitos_sexuales_2017[Cod_0010_Delitos_sexuales_2017$Municipio == "BOGOTA D.C.",]$Municipio <-"BOGOTA"
+Cod_0018_Delitos_Homicidios_2017[Cod_0018_Delitos_Homicidios_2017$Municipio == "BOGOTA D.C.",]$Municipio <-"BOGOTA"
+#Cod_0026_Delito_Hurto_a_personas_2017[Cod_0026_Delito_Hurto_a_personas_2017$Municipio == "BOGOTA D.C.",]$Municipio <-"BOGOTA"
+Cod_0035_Delito_Violencia_intrafamiliar_2018[Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio == "BOGOTA D.C.",]$Municipio <-"BOGOTA"
+Extorsi_n_2017[Extorsi_n_2017$Municipio == "BOGOTA D.C.",]$Municipio <-"BOGOTA"
+municipal2017[municipal2017$Municipio == "BOGOTA, D.C.",]$Municipio <-"BOGOTA"
+
+# Revisar con el merge de todos los nombres
+merge_Delitos_sexuales_2017 <- merge(x = Cod_0010_Delitos_sexuales_2017, y = municipal2017, by = "Municipio", all = TRUE)
+merge_Delitos_Homicidios_2017 <- merge(x = Cod_0018_Delitos_Homicidios_2017, y = municipal2017, by = "Municipio", all = TRUE)
+merge_Delito_Hurto_a_personas_2017 <- merge(x = Cod_0026_Delito_Hurto_a_personas_2017, y = municipal2017, by = "Municipio", all = TRUE)
+merge_Delito_Violencia_intrafamiliar_2018 <- merge(x = Cod_0035_Delito_Violencia_intrafamiliar_2018, y = municipal2017, by = "Municipio", all = TRUE)
+merge_Extor_2017 <- merge(x = Extorsi_n_2017, y = municipal2017, by = "Municipio", all = TRUE)
+
+
+table(is.na(merge_Delitos_sexuales_2017))
+table(is.na(merge_Delitos_Homicidios_2017))
+table(is.na(merge_Delito_Hurto_a_personas_2017))
+table(is.na(merge_Delito_Violencia_intrafamiliar_2018))
+table(is.na(merge_Extor_2017))
+
+
+merge_Delitos_sexuales_2017 <- na.omit(merge_Delitos_sexuales_2017)
+merge_Delitos_Homicidios_2017 <- na.omit(merge_Delitos_Homicidios_2017)
+merge_Delito_Hurto_a_personas_2017 <- na.omit(merge_Delito_Hurto_a_personas_2017)
+merge_Delito_Violencia_intrafamiliar_2018 <- na.omit(merge_Delito_Violencia_intrafamiliar_2018)
+merge_Extor_2017 <-na.omit(merge_Extor_2017)
+
+table(is.na(merge_Delitos_sexuales_2017))
+table(is.na(merge_Delitos_Homicidios_2017))
+table(is.na(merge_Delito_Hurto_a_personas_2017))
+table(is.na(merge_Delito_Violencia_intrafamiliar_2018))
+table(is.na(merge_Extor_2017))
+
+```
+
+(reportes/poblacion_municipio)*100000
+
+## Delitos sexuales
+
+              
+
+(reportes/poblacion_municipio)*100000
+```{r delitosE, echo=FALSE}
+#Cod_0010_Delitos_sexuales_2017$DELITO <- factor(Cod_0010_Delitos_sexuales_2017$DELITO)
+#Cod_0010_Delitos_sexuales_2017$Departamento <- factor(Cod_0010_Delitos_sexuales_2017$Departamento)
+merge_Delitos_sexuales_2017$Municipio <- factor(merge_Delitos_sexuales_2017$Municipio)
+
+
+#table(Cod_0010_Delitos_sexuales_2017$Municipio)
+#table(Cod_0010_Delitos_sexuales_2017$DELITO)
+#sort(table(Cod_0010_Delitos_sexuales_2017$Municipio))
+#table(Cod_0010_Delitos_sexuales_2017$DELITO)
+
+#head(sort(table(Cod_0010_Delitos_sexuales_2017$Municipio))) # primeros
+#tail(sort(table(Cod_0010_Delitos_sexuales_2017$Municipio))) # ultimos
+
+
+w_sexo <- as.data.frame(table(merge_Delitos_sexuales_2017$Municipio))
+names(w_sexo)[1] <- "Municipio"
+w_sexo <- merge(x = w_sexo, y = merge_Delitos_sexuales_2017, by = "Municipio")
+
+w_sexo <- w_sexo[!is.na(w_sexo$POBLACION),]
+
+w_sexo$indice <- (w_sexo$Freq / w_sexo$POBLACION) *  100000
+w_sexo <- w_sexo[!duplicated(w_sexo$Municipio),][,c(1,3,4,24)]
+print("Top 5 de menos indice de delitos sexuales")
+head(w_sexo[order(w_sexo$indice),])
+print("Top 5 de mayor indice de delitos sexuales")
+tail(w_sexo[order(w_sexo$indice),])
+
+
+
+
+```
+
+
++ ARMENIA	02/15/2017 12:00:00 AM	QUINDÍO	11169.025__Menores indices de delitos sexuales 2017__
+
++ OLAYA HERRERA	09/28/2017 12:00:00 AM	NARIÑO	3.126368
++ SANTACRUZ	01/03/2017 12:00:00 AM	NARIÑO	3.337450
++ PINILLOS	08/21/2017 12:00:00 AM	BOLÍVAR	3.929582
++ ROBERTO PAYAN	01/30/2017 12:00:00 AM	NARIÑO	4.169446
++ MEDIO SAN JUAN	04/07/2017 12:00:00 AM	CHOCÓ	5.857888
+
+
+__Mayores indices de delitos sexuales 2017__
++ NARIÑO	11/19/2017 12:00:00 AM	CUNDINAMARCA	1209.136
++ SANTA BARBARA	10/14/2017 12:00:00 AM	ANTIOQUIA	1857.143
++ BUENAVISTA	03/26/2017 12:00:00 AM	QUINDÍO	2159.050
++ GRANADA	06/19/2017 12:00:00 AM	META	2384.369
++ SABANALARGA	02/19/2017 12:00:00 AM	ATLÁNTICO	10473.557
+
+
+
+## Homicidios
+
+
+```{r delitosh, echo=FALSE}
+Cod_0018_Delitos_Homicidios_2017$Departamento <- factor(Cod_0018_Delitos_Homicidios_2017$Departamento)
+Cod_0018_Delitos_Homicidios_2017$Municipio <- factor(Cod_0018_Delitos_Homicidios_2017$Municipio)
+
+
+table(Cod_0018_Delitos_Homicidios_2017$Municipio)
+table(Cod_0018_Delitos_Homicidios_2017$DELITO)
+#head(sort(table(Cod_0018_Delitos_Homicidios_2017$Municipio)))
+#tail(sort(table(Cod_0018_Delitos_Homicidios_2017$Municipio)))
+table(Cod_0018_Delitos_Homicidios_2017$DELITO)
+#NROW(Cod_0010_Delitos_sexuales_2017[Cod_0018_Delitos_Homicidios_2017$Municipio == "CALI (CT)",])
+
+
+w_homicidios <- as.data.frame(table(merge_Delitos_Homicidios_2017$Municipio))
+names(w_homicidios)[1] <- "Municipio"
+w_homicidios <- merge(x = w_homicidios, y = merge_Delitos_Homicidios_2017, by = "Municipio")
+
+w_homicidios <- w_homicidios[!is.na(w_homicidios$POBLACION),]
+
+w_homicidios$indice <- (w_homicidios$Freq / w_homicidios$POBLACION) *  100000
+w_homicidios <- w_homicidios[!duplicated(w_homicidios$Municipio),][,c(1,3,4,23)]
+print("Top 5 de menos indice de homicidios")
+head(w_homicidios[order(w_homicidios$indice),])
+print("Top 5 de mayor indice de homicidios")
+tail(w_homicidios[order(w_homicidios$indice),])
+
+
+```
+
+
+__Menores indices de Homicidios 2017__
+
++ SOGAMOSO	05/09/2017	BOYACÁ	1.7811501
++ SAN GIL	16/07/2017	SANTANDER	2.1856968
++ LEBRIJA	08/06/2017	SANTANDER	2.4843486
++ BARRANCAS	03/06/2017	GUAJIRA	2.7674766
++ GIGANTE	12/05/2017	HUILA	2.9061319
+
+
+__Mayores indices de Homicidios 2017__
++ BOLIVAR	13/10/2017	VALLE	616.8609
++ CANDELARIA	06/02/2017	VALLE	622.6054
++ LA UNION	19/08/2017	ANTIOQUIA	952.1838
++ BUENAVISTA	08/04/2017	CÓRDOBA	1295.4300
++ ARGELIA	25/09/2017	VALLE	1736.5457
++ ARMENIA	21/02/2017	QUINDÍO	4417.9697
+
+
+
+
+## Hurto a personas
+
+
+R/  Según los datos el municipio con el menores reportes de hurtos son:
++ ACHÍ ALEJANDRÍA
++ ALMAGUER
++ ANCUYÁ
++ ARBOLEDA
++ ASTREA
+
+Los cinco municipios con la mayor cantidad de reportes son:
++ BUCARAMANGA (CT)       
++ PASTO (CT) BARRANQUILLA (CT)        
++ CALI (CT)     (14708)
++ MEDELLÍN (CT)  
++ BOGOTÁ D.C. (CT) (65482)
+
+
+```{r hurtoPersonas, echo=FALSE}
+
+Cod_0026_Delito_Hurto_a_personas_2017$Departamento <- factor(Cod_0026_Delito_Hurto_a_personas_2017$Departamento)
+Cod_0026_Delito_Hurto_a_personas_2017$Municipio <- factor(Cod_0026_Delito_Hurto_a_personas_2017$Municipio)
+
+
+#table(Cod_0026_Delito_Hurto_a_personas_2017$Municipio)
+#table(Cod_0026_Delito_Hurto_a_personas_2017$DELITO)
+#head(sort(table(Cod_0026_Delito_Hurto_a_personas_2017$Municipio))) # primeros
+#tail(sort(table(Cod_0026_Delito_Hurto_a_personas_2017$Municipio))) # ultimos
+table(Cod_0026_Delito_Hurto_a_personas_2017$DELITO)
+NROW(Cod_0026_Delito_Hurto_a_personas_2017[Cod_0026_Delito_Hurto_a_personas_2017$Municipio == "CALI (CT)",])
+
+
+w_hurto <- as.data.frame(table(merge_Delito_Hurto_a_personas_2017$Municipio))
+names(w_hurto)[1] <- "Municipio"
+w_hurto <- merge(x = w_hurto, y = merge_Delito_Hurto_a_personas_2017, by = "Municipio")
+
+w_hurto <- w_hurto[!is.na(w_hurto$POBLACION),]
+
+w_hurto$indice <- (w_hurto$Freq / w_hurto$POBLACION) *  100000
+w_hurto <- w_hurto[!duplicated(w_hurto$Municipio),][,c(1,3,4,23)]
+print("Top 5 de menos indice de hurtos")
+head(w_hurto[order(w_hurto$indice),])
+print("Top 5 de mayor indice de hurtos")
+tail(w_hurto[order(w_hurto$indice),])
+
+
+
+
+
+```
+
+
+__Menores indices de hurtos 2017__
+
++ MEDIO ATRATO	12/04/2017 12:00:00 AM	CHOCÓ	3.178134
++ SANTACRUZ	02/05/2017 12:00:00 AM	NARIÑO	3.337450
++ MOÑITOS	01/06/2017 12:00:00 AM	CÓRDOBA	3.534318
++ PINILLOS	05/14/2017 12:00:00 AM	BOLÍVAR	3.929582
++ ROBERTO PAYAN	04/04/2017 12:00:00 AM	NARIÑO	4.169446
++ MAGÜI	01/21/2017 12:00:00 AM	NARIÑO	4.189535
+
+
+__Mayores indices de hurtos 2017__
++ SABANALARGA	08/25/2017 12:00:00 AM	ATLÁNTICO	3552.680
++ MOSQUERA	02/22/2017 12:00:00 AM	CUNDINAMARCA	3600.579
++ LA UNION	03/26/2017 12:00:00 AM	ANTIOQUIA	3978.173
++ RIONEGRO	07/22/2017 12:00:00 AM	ANTIOQUIA	4977.511
++ GRANADA	07/10/2017 12:00:00 AM	META	5265.482
++ CALDAS	10/05/2017 12:00:00 AM	ANTIOQUIA	7943.662
+
+
+## Violencia intrafamiliar
+
+
+R/  Según los datos el municipio con el menores reportes de violencia intrafamiliar son:
++ AGUA DE DIOS        
++ ANCUYÁ      
++ ARMENIA       
++ ATRATO      
++ BELMIRA
+
+Los cinco municipios con la mayor cantidad de reportes son:
++ BUCARAMANGA (CT)     
++ POPAYÁN (CT)       
++ PASTO (CT)        
++ CALI (CT) 3244
++ MEDELLÍN (CT) 5338 
++ BOGOTÁ D.C. (CT)  22088
+
+
+
+```{r hurtofami, echo=FALSE}
+
+Cod_0035_Delito_Violencia_intrafamiliar_2018$Departamento <- factor(Cod_0035_Delito_Violencia_intrafamiliar_2018$Departamento)
+Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio <- factor(Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio)
+
+
+#table(Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio)
+#table(Cod_0035_Delito_Violencia_intrafamiliar_2018$DELITO)
+head(sort(table(Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio))) # primeros
+tail(sort(table(Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio))) # ultimos
+
+#NROW(Cod_0035_Delito_Violencia_intrafamiliar_2018[Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio == "CALI (CT)",])
+
+
+w_familiar <- as.data.frame(table(merge_Delito_Violencia_intrafamiliar_2018$Municipio))
+names(w_familiar)[1] <- "Municipio"
+w_familiar <- merge(x = w_familiar, y = merge_Delito_Violencia_intrafamiliar_2018, by = "Municipio")
+
+w_familiar <- w_familiar[!is.na(w_familiar$POBLACION),]
+
+w_familiar$indice <- (w_familiar$Freq / w_familiar$POBLACION) *  100000
+w_familiar <- w_familiar[!duplicated(w_familiar$Municipio),][,c(1,3,4,23)]
+print("Top 5 de menos indice de violencia intrafamiliar")
+head(w_familiar[order(w_familiar$indice),])
+print("Top 5 de mayor indice de violencia intrafamiliar")
+tail(w_familiar[order(w_familiar$indice),])
+
+```
+
+
+__Menores indices de violencia intrafamiliar 2017__
+
++ EL CHARCO	04/02/2018 12:00:00 AM	NARIÑO	2.525253
++ CUMARIBO	02/25/2018 12:00:00 AM	VICHADA	2.588394
++ MEDIO ATRATO	05/09/2018 12:00:00 AM	CHOCÓ	3.178134
++ REPELON	08/31/2018 12:00:00 AM	ATLÁNTICO	3.734409
++ ROBERTO PAYAN	07/21/2018 12:00:00 AM	NARIÑO	4.169446
++ MAGÜI	09/15/2018 12:00:00 AM	NARIÑO	4.189535
+
+
+__Mayores indices de violencia intrafamiliar 2017__
++ NARIÑO	09/20/2018 12:00:00 AM	ANTIOQUIA	1880.878
++ GUADALUPE	09/04/2018 12:00:00 AM	HUILA	1889.661
++ MOSQUERA	05/03/2018 12:00:00 AM	CUNDINAMARCA	2037.627
++ GRANADA	06/03/2018 12:00:00 AM	META	3609.670
++ SABANALARGA	04/03/2018 12:00:00 AM	ATLÁNTICO	8295.887
++ ARMENIA	04/08/2018 12:00:00 AM	QUINDÍO	12608.588
+
+
+
+
+## Extorsión
+
++ ABEJORRAL      
++ ACEVEDO AGUA DE DIOS 
++ ALBÁN
++ ALGARROBO
++ ANAPOIMA 
+
+Los de menos
+
++ QUIBDÓ (CT)     113   
++ CÚCUTA (CT) 
++ VILLAVICENCIO (CT)  161        
++ CALI (CT)   295
++ BOGOTÁ D.C. (CT)      429
++ MEDELLÍN (CT)                     
+                                                        
+```{r extorsion, echo=FALSE}
+
+Extorsi_n_2017$Departamento <- factor(Extorsi_n_2017$Departamento)
+Extorsi_n_2017$Municipio <- factor(Extorsi_n_2017$Municipio)
+
+
+#table(Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio)
+#table(Cod_0035_Delito_Violencia_intrafamiliar_2018$DELITO)
+head(sort(table(Extorsi_n_2017$Municipio))) # primeros
+tail(sort(table(Extorsi_n_2017$Municipio))) # ultimos
+
+#NROW(Cod_0035_Delito_Violencia_intrafamiliar_2018[Cod_0035_Delito_Violencia_intrafamiliar_2018$Municipio == "CALI (CT)",])
+
+
+w_extorsion <- as.data.frame(table(merge_Extor_2017$Municipio))
+names(w_extorsion)[1] <- "Municipio"
+w_extorsion <- merge(x = w_extorsion, y = merge_Extor_2017, by = "Municipio")
+
+w_extorsion <- w_extorsion[!is.na(w_extorsion$POBLACION),]
+
+w_extorsion$indice <- (w_extorsion$Freq / w_extorsion$POBLACION) *  100000
+w_extorsion <- w_extorsion[!duplicated(w_extorsion$Municipio),][,c(1,3,4,23)]
+print("Top 5 de menos indice de extorción")
+head(w_extorsion[order(w_extorsion$indice),])
+print("Top 5 de mayor indice de extorción")
+tail(w_extorsion[order(w_extorsion$indice),])
+
+```
+
+
+__Menores indices de extorción 2017__
+
++ NECOCLI	27/07/2017	ANTIOQUIA	1.522928
++ URIBIA	27/06/2017	GUAJIRA	1.608303
++ BARANOA	01/11/2017	ATLÁNTICO	1.695231
++ VILLAMARIA	24/12/2017	CALDAS	1.709957
++ PUERTO LIBERTADOR	04/12/2017	CÓRDOBA	1.970249
++ GARZON	10/03/2017	HUILA	2.169527
+
+
+__Mayores indices de extorción 2017__
++ SUCRE	09/03/2017	SANTANDER	218.2877
++ CRAVO NORTE	17/07/2017	ARAUCA	245.1732
++ CALDAS	25/07/2017	ANTIOQUIA	281.6901
++ LA UNION	28/03/2017	VALLE	387.2558
++ VILLANUEVA	28/01/2017	GUAJIRA	566.1713
++ GRANADA	24/07/2017	META	1125.9521
+
+
+## Enfoque hacia Cali
+
+```{r hurtoCali, echo=FALSE}
+
+w_sexo[w_sexo$Municipio == "CALI",]$indice
+w_homicidios[w_homicidios$Municipio == "CALI",]$indice
+w_familiar[w_familiar$Municipio == "CALI",]$indice
+w_extorsion[w_extorsion$Municipio == "CALI",]$indice
+w_hurto[w_hurto$Municipio == "CALI",]$indice
+```
+
+
+Filtro de los indices para Cali teniendo en cuenta todos los datos de 2017
+
++ Delitos sexuales, 59.62529
++ Homicidios, 50.98933
++ Familiar, 134.0433 **
++ Extorsión, 12.14819
++ Hurto, 607.74 ***
+
+
+## El enfoque se realizará para educación
+
+
+Encuesta Transición de la Escuela al Trabajo - ETET 2015							
+
+```{r eduCali, echo=FALSE}
+
+JOVENES_DESOCUPADOS$EP714 <- factor(JOVENES_DESOCUPADOS$EP714)
+#  ¿Cuál ha sido el obstáculo principal para encontrar un buen trabajo?
+# 3	No tiene suficiente experiencia laboral
+# Los requisitos del trabajo son mayores que la educación / formación recibida
+table(JOVENES_DESOCUPADOS$EP714) / (21 + 95 +238  +95+  27  + 8 + 19  + 7+   9  +34 ) 
+
+# ¿Cree <...> que la educación o formación recibida es útil para conseguir trabajo?
+table(JOVENES_DESOCUPADOS$EP715) / (454 + 99)
+
+
+# ¿Qué nivel de educación / formación piensa que sería más útil para encontrar trabajo?
+table(JOVENES_DESOCUPADOS$EP716) / (34+ 157+ 262+  72+  12  + 4 + 11  + 1)
+#3	Superior universitaria - 47%
+# Superior no universitaria (Técnico o Tecnológico) - 28%¿
+#table(JOVENES_DESOCUPADOS$EP701)
+```
+
+## Visualizaciones - Mapas
+
+```{r vimaps, echo=FALSE}
+colmap(municipios) +
+  ggtitle("Colombia")
+```
+
+## Visualizaciones - Series de tiempo
+
+```{r vise, echo=FALSE}
+tsData <- EuStockMarkets[, 1] # ts data
+decomposedRes <- decompose(tsData, type="mult") # use type = "additive" for additive components
+plot (decomposedRes) # see plot below
+stlRes <- stl(tsData, s.window = "periodic")
+```
+
+## Análisis por estrato y municipio
+
+```{r est, echo=FALSE}
+#  -----Santa Monica----
+#   ***estrato 5****
+# 15 - 19 años ... hombres
+93 / (93 +102)
+# 15 - 19 años ... mujeres
+102 / (93 +102)
+
+```

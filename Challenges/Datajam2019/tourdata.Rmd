@@ -1,0 +1,217 @@
+---
+title: "TourDatos_Datajam"
+author: "Christian Urcuqui"
+date: "12 de marzo de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(ggplot2)
+library(gmodels)
+library(dplyr)
+library(readxl)
+library(GGally)
+library(readr)
+
+```
+save.image("~/GitHub/Data-Science/Challenges/Datajam2019/environment.RData")
+
+Cuales son las dos opciones según la base de datos mas frecuentes de Hurto 
+R/ d. Raponazo y Atraco
+```{r primeraQ}
+Hurto_a_personas <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Hurto a personas/Hurto a personas.xlsx")
+hurto <- Hurto_a_personas[!is.na(Hurto_a_personas$P1229),]
+hurto$P1229 <- factor(hurto$P1229)
+table(hurto$P1229)
+# na en razon
+
+```
+
+
+¿Cuál fue la principal razón por la cual los encuestados denunciaron el Hurto?
+R/ d. Recuperar los vienes hurtados
+```{r 2Q, echo=FALSE}
+hurto <- Hurto_a_personas[!is.na(Hurto_a_personas$P1114),]
+table(is.na(hurto$P1114))
+table(hurto$P1114)
+```
+https://www.r-bloggers.com/to-eat-or-not-to-eat-thats-the-question-measuring-the-association-between-categorical-variables/
+For categorical variables, the concept of correlation can be understood in terms of significance test and effect size (strength of association)
+
+The Pearson's chi-squared test of independence is one of the most basic and common hypothesis tests in the statistical analysis of categorical data. It is a significance test. Given two categorical random variables, X and Y, the chi-squared test of independence determines whether or not there exists a statistical dependence between them. Formally, it is a hypothesis test. The chi-squared test assumes a null hypothesis and an alternate hypothesis. The general practice is, if the p-value that comes out in the result is less than a pre-determined significance level, which is 0.05 usually, then we reject the null hypothesis.
+
+H0: The The two variables are independent
+
+H1: The The two variables are dependent
+
+The null hypothesis of the chi-squared test is that the two variables are independent and the alternate hypothesis is that they are related.
+
+To establish that two categorical variables (or predictors) are dependent, the chi-squared statistic must have a certain cutoff. This cutoff increases as the number of classes within the variable (or predictor) increases.
+
+
+En la encuesta de Convivencia y Seguridad ciudadana, micro dato Percepción y Convivencia. La relación que existe entre las variables de la "sensación de seguridad en el barrio" con la variable "que tan inseguro es el barrio", puede generar una proporcionalidad directa e indirecta, el coeficiente de correlación de correlación a encontrar entre estas dos variables es:
+```{r 3Q, echo=FALSE}
+
+Percepcion_de_seguridad_y_convivencia <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Percepcion de seguridad y convivencia/Percepcion de seguridad y convivencia.xlsx")
+View(Percepcion_de_seguridad_y_convivencia)
+table(is.na(Percepcion_de_seguridad_y_convivencia$P1362))
+table(is.na(Percepcion_de_seguridad_y_convivencia$P563))
+percep <- Percepcion_de_seguridad_y_convivencia[!is.na(Percepcion_de_seguridad_y_convivencia$P563),]
+percep <- Percepcion_de_seguridad_y_convivencia
+table(is.na(percep$P563))
+frag <- percep[, c('P563', 'P1362')]
+#frag$P562 <- factor(frag$P562, levels=c('1','2','3'), ordered = TRUE)
+#frag$P1362 <- factor(frag$P1362, levels=c('2','1'), ordered = TRUE)
+frag$P562 <- factor(frag$P562)
+frag$P1362 <- factor(frag$P1362)
+chisq.test(x=frag$P563, y=frag$P1362, correct = FALSE)
+install.packages("GoodmanKruskal")
+#library(GoodmanKruskal)
+#GKmatrix1<- GKtauDataframe(frag)
+#plot(GKmatrix1, corrColors = "blue")
+ok <- fastDummies::dummy_cols( frag)
+ok$P562 <- NULL
+ok$P1362 <- NULL
+ok$P562_NA <- NULL
+quick.test <- function(x){
+  chisq   <- chisq.test(x)
+  fisher  <- fisher.test(x)
+  results <- cbind(chisq  = chisq$statistic,
+                   df     = chisq$parameter,
+                   p      = chisq$p.value,
+                   fisher = fisher$p.value)
+  results
+}
+# 1362 sensación de seguridad 1 contra que tan inseguro es el barrio (P562)
+
+quick.test(ok[,1:4])
+
+chisq.test(ok)
+cor(ok, method = c("pearson", "kendall", "spearman"))
+mean(cor(ok, method = c("pearson", "kendall", "spearman")))
+cor(frag)
+mean(cor(frag))
+```
+
+
+
+¿Cuál es la proporción de gente que ocupo la actividad estudiando durante la semana pasada?
+R/ a. 8990/9508
+```{r 4Q, echo=FALSE}
+trabajo_infantil <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Trabajo infantil/Trabajo infantil.xlsx")
+ok <-NROW(trabajo_infantil[trabajo_infantil$P400==3,]$P400)
+table(is.na(trabajo_infantil$P400))
+
+```
+
+
+
+
+En la base de datos - Encuesta nacional de Calidad de Vida ENCV 2015, en el microdato Trabajo Infantil.
+En la columna P807: ¿Cuánto recibió o ganó el mes pasado? se registra el valor de dinero recibió por remuneración el mes pasado, cual de las siguientes afirmaciones es correcta: 
+```{r 5Q, echo=FALSE}
+trabajo_infantil <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Trabajo infantil/Trabajo infantil.xlsx")
+summary(trabajo_infantil$P807)
+table(is.na(trabajo_infantil$P807))
+```
+
+__falta__
+```{r 6Q, echo=FALSE}
+#educacion <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Educacion/Educacion.xlsx")
+
+```
+
+en el campo de  ¿cuál es el nivel educativo más alto alcanzado por ... Y el último año o grado aprobado en este nivel?.  Seleccione la opción donde el nivel educativo tiene 47554 registros y un porcentaje de 15,34% 
+R/ b. 4 Básica secundaria (6º--9º) 
+```{r 7Q, echo=FALSE}
+edu <- read_delim("~/GitHub/seguridad_ciudadana/tourdedatos/Educacion/2/Educación.txt", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+edu <- edu[!is.na(edu$P8587),]
+table(is.na(edu$P8587))
+edu$P8587 <- factor(edu$P8587)
+table(edu$P8587)
+prop.table(table(edu$P8587))*100
+```
+
+__Revisar__
+En el set de datos HURTO A PERSONAS 2017 reportado por la DIJIN en datos.gov.co (ver Link) ¿Cual de las siguientes afirmaciones es correcta?
+R/ d. La proporcion es de 70% a 30% de los hurtos en hombres y mujeres
+
+```{r 8Q, echo=FALSE}
+hurto2017 <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Hurto_a_personas_2017.xlsx")
+table(is.na(hurto2017$Sexo))
+table(is.na(hurto2017$`Estado civil`))
+hurto2017$Sexo <- factor(hurto2017$Sexo)
+hurto2017$`Estado civil` <- factor(hurto2017$`Estado civil`)
+table(hurto2017$`Estado civil`)
+table(hurto2017$Sexo)
+
+HOMBRES_SOLTEROS <- NROW(dplyr::filter(hurto2017, hurto2017$Sexo=="MASCULINO" & hurto2017$`Estado civil`=="SOLTERO"))
+MUJERES_DIVORCIADAS <- NROW(dplyr::filter(hurto2017, hurto2017$Sexo=="FEMENINO" & hurto2017$`Estado civil`=="DIVORCIADO"))
+HOMBRES_CASADOS <- NROW(dplyr::filter(hurto2017, hurto2017$Sexo=="MASCULINO" & hurto2017$`Estado civil`=="CASADO"))
+MUJERES_CASADAS <- NROW(dplyr::filter(hurto2017, hurto2017$Sexo=="FEMENINO" & hurto2017$`Estado civil`=="CASADO"))
+
+PORCEN_HOM_CASADAS
+PORCEN_MUJ_CASADAS <- MUJERES_CASADAS / NROW(hurto2017)
+
+PORCEN_HOM <- NROW(dplyr::filter(hurto2017,  hurto2017$Sexo=="MASCULINO")) /  NROW(hurto2017)
+PORCEN_MUJER <- NROW(dplyr::filter(hurto2017, hurto2017$Sexo=="FEMENINO")) /  NROW(hurto2017)
+
+PORCEN_SOL <- NROW(dplyr::filter(hurto2017, hurto2017$`Estado civil`=="SOLTERO")) /  NROW(hurto2017)
+PORCEN_LIBRE <- NROW(dplyr::filter(hurto2017,  hurto2017$`Estado civil`=="UNION LIBRE")) /  NROW(hurto2017)
+```
+
+
+En el set de datos INCAUTACION DE ARMAS 2017 reportado por la DIJIN en datos.gov.co (ver Link), responda Falso o verdadero para la siguente afirmación: Aproximadamente la relación de incautación de armas es de 1  a 9, es decir por cada arma con salvoconducto se incautan 9 armas que no tienen este permiso.
+R/ V
+```{r 9Q, echo=FALSE}
+armas <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Incautaci_n_armas_de_fuego_2017.xlsx")
+table(armas$PERMISO)
+armas$PERMISO <- factor(armas$PERMISO)
+NROW(dplyr::filter(armas, armas$PERMISO=="CON PERMISO")) / NROW(dplyr::filter(armas, armas$PERMISO=="SIN PERMISO"))
+#NROW(dplyr::filter(armas, armas$PERMISO=="SIN PERMISO")) / NROW(armas)
+prop.table(table(armas$PERMISO))*100
+```
+
+
+De acuerdo con el set de datos: Incautación estupefacientes 2018, ¿Cuál es la sustancia que mas incautan incautaron las autoridades en el 2018?
+R/  MARIHUANA 
+```{r 10Q, echo=FALSE}
+estupefacientes <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/Incautacion-estupefacientes-2018.xlsx")
+table(factor(estupefacientes$CLASE_BIEN))
+
+```
+
+
+__Revisar__
+De acuerdo con el set de datos: Incautación estupefacientes 2018, ¿Cuál es el promedio en Gramos de incautación de cocaína en el Departamento del Valle?
+R/ a. 23,82 Gramos
+```{r 11Q, echo=FALSE}
+estupefacientes$BIEN_UNIDAD_MEDIDA <- factor(estupefacientes$BIEN_UNIDAD_MEDIDA)
+estupefacientes$CLASE_BIEN<- factor(estupefacientes$CLASE_BIEN)
+table(estupefacientes$CLASE_BIEN)
+sum(filter(estupefacientes, estupefacientes$DEPTO_HECHO=="VALLE" & CLASE_BIEN == 'COCAINA' )$'Droga Incautada/ Cantidad') / sum(filter(estupefacientes,  estupefacientes$DEPTO_HECHO=="VALLE" )$'Droga Incautada/ Cantidad') * 100
+
+sum(filter(estupefacientes, estupefacientes$DEPTO_HECHO=="VALLE" & CLASE_BIEN == 'COCAINA' )$'Droga Incautada/ Cantidad') / sum(filter(estupefacientes,  estupefacientes$DEPTO_HECHO=="VALLE" )$'Droga Incautada/ Cantidad') * 100
+```
+
+De acuerdo con el set de datos: Incautación estupefacientes 2018,¿En promedio el Departamento que más droga incauta es? 
+R / a. ANTIOQUIA
+
+```{r 12Q, echo=FALSE}
+(table(estupefacientes$DEPTO_HECHO) / sum(estupefacientes$'Droga Incautada/ Cantidad') ) * 10000
+
+```
+
+De acuerdo con el set de datos: delitos sexuales, ¿Cuántos delitos Sexuales se cometieron con niños menores de 14 años?
+R/ 10820 | 8762
+```{r 13Q, echo=FALSE}
+delitos_sexuales_2018 <- read_excel("~/GitHub/seguridad_ciudadana/tourdedatos/delitos-sexuales-2018.xlsx")
+table(delitos_sexuales_2018$Edad == '-')
+NROW(filter(delitos_sexuales_2018, delitos_sexuales_2018$Edad < 14 & delitos_sexuales_2018$Edad != '-'))
+```
