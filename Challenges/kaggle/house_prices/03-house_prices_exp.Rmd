@@ -1,0 +1,58 @@
+---
+title: "03-house_prices_exp"
+author: "Christian Urcuqui"
+date: "21 de marzo de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Exploration with R
+
+## Load the datasets
+
+```{r data, include=FALSE}
+train <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase2/train.csv", stringsAsFactors=FALSE)
+test <-read.csv(file.choose(), stringsAsFactors=FALSE) 
+```
+
+## Libraries 
+
+
+```{r lib, include=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+## Understand the Problem
+
+```{r us1, include=FALSE, warning=FALSE, message=FALSE}
+str(train)
+```
+
+### Data Transformation and Cleaning
+
+Let's use the next script which has some activities for transforming and cleaning 
+
+```{r clearning, include=FALSE, warning=FALSE, message=FALSE}
+source("03-limpiar_transformar.R")
+ok <- lt_house(train)
+```
+
+
+
+
+```{r us2, include=FALSE, warning=FALSE, message=FALSE}
+summary(train$SalePrice)
+```
+
+
+## Cleaning and Transformations
+
+## Univariable Study
+
+## Multivariate Study
+
+## Test Assumptions
