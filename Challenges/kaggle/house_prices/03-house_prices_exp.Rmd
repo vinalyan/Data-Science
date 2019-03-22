@@ -24,6 +24,7 @@ test <-read.csv(file.choose(), stringsAsFactors=FALSE)
 ```{r lib, include=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
+library(pastecs)
 ```
 
 ## Understand the Problem
@@ -38,21 +39,60 @@ Let's use the next script which has some activities for transforming and cleanin
 
 ```{r clearning, include=FALSE, warning=FALSE, message=FALSE}
 source("03-limpiar_transformar.R")
-ok <- lt_house(train)
+train_clean <- lt_house(train)
 ```
-
-
-
-
-```{r us2, include=FALSE, warning=FALSE, message=FALSE}
-summary(train$SalePrice)
-```
-
-
-## Cleaning and Transformations
 
 ## Univariable Study
 
+### Analysing 'SalePrice'
+
+
+```{r us2, include=FALSE, warning=FALSE, message=FALSE}
+summary(train_clean$saleprice)
+```
+
+
+
+De este podemos inferir que nuestro precio minimo por lo menos es más grande que cero. Ahora veamos como esta la distribución de estos datos.
+
+
+```{r us3, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(train_clean$saleprice, alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("precio de venta")
+```
+  
+  
++ Podemos concluir que no tiene una distribución normal
++ Tiene una asimetría positiva 
++ Tiene un pico 
+
+
+```{r us4, include=FALSE, warning=FALSE, message=FALSE}
+
+
+library(psych)
+describe(train_clean$saleprice)
+
+
+```
+
+
 ## Multivariate Study
+
+Let's analyze the relationthip between the features:
+
++ GrLivArea, Above grade (ground) living area square feet.
++ TotalBsmtSF, Total square feet of basement area.
++ LotArea: Lot size in square feet
+
+```{r mul1, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$grlivarea, y=train_clean$saleprice)) + 
+  xlab("grlivarea") + 
+  ylab("saleprice")
+```
 
 ## Test Assumptions
