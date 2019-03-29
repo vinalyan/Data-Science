@@ -414,6 +414,6 @@ test$prediction <- exp(saleprice_pred)
 names(test)[1]<-"Id"
 names(test)[8]<-"SalePrice"
 
-write.csv2(test[,c(1,8)], "test_1_housep.csv")
+write.csv(test[,c(1,8)], "test_1_housep.csv", row.names = FALSE)
 
 ```
