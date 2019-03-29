@@ -19,7 +19,7 @@ https://www.kaggle.com/c/house-prices-advanced-regression-technique
 
 ## paquetes
 
-```{r paquetes}
+```{r paquetes, warning=FALSE, message=FALSE}
 library(dplyr)
 library(ggplot2)
 library(psych)
@@ -59,6 +59,9 @@ diapositiva 18
 ```{r nombresC}
 train2 <- train
 colnames(train2)<- tolower(colnames(train2))
+head(train2$yrsold)
+head()
+class(train2$yearbuilt)
 ```
 
 
@@ -90,6 +93,8 @@ Diapositiva 30
 table(factor(train2$street)) # dato mal digitado - v versus b
 table(factor(train2$lotconfig)) # dato mal digitado - minuscula
 levels(factor(train2$lotconfig))
+table(train2$lotshape)
+
 
 # corrección de los problemas
 train2[train2$street=="Pabe",]$street <- "Pave"
@@ -177,7 +182,7 @@ train2$garageyrblt <- as.character(train2$garageyrblt)
 Diapositiva 39
 ```{r missing}
 # ¿cuantos missing values existen?
-(table(is.na(train2)))
+table(is.na(train2))
 summary(train2)
 # podemos encontrar las siguientes variables con NAs: lotfrontage, alley, masvnrtype, masvnrarea, bsmtcond, bsmtexposure, bsmtfintype1, bsmtfintype2, electrical, fireplacequ, garagetype, garagefinish, garagecond, poolqc, fence, miscfeature
 ```

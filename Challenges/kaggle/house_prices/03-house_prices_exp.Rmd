@@ -11,21 +11,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Data Exploration with R
 
-## Load the datasets
-
-```{r data, include=FALSE}
-train <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase2/train.csv", stringsAsFactors=FALSE)
-test <-read.csv(file.choose(), stringsAsFactors=FALSE) 
-```
-
 ## Libraries 
 
 
 ```{r lib, include=FALSE, warning=FALSE, message=FALSE}
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("pastecs")
+#install.packages("psych")
+#install.packages("psych")
+#install.packages("ggcorrplot")
+#install.packages("fastDummies")
+
 library(ggplot2)
 library(dplyr)
 library(pastecs)
+library(psych)
+library(ggcorrplot)
+library(fastDummies)
 ```
+
+
+## Load the datasets
+
+```{r data, include=FALSE}
+train <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase2/train.csv", stringsAsFactors=FALSE)
+```
+
 
 ## Understand the Problem
 
@@ -51,8 +63,6 @@ train_clean <- lt_house(train)
 summary(train_clean$saleprice)
 ```
 
-
-
 De este podemos inferir que nuestro precio minimo por lo menos es más grande que cero. Ahora veamos como esta la distribución de estos datos.
 
 
@@ -72,10 +82,38 @@ ggplot(train_clean) +
 
 ```{r us4, include=FALSE, warning=FALSE, message=FALSE}
 
-
-library(psych)
 describe(train_clean$saleprice)
 
+```
+
+Slide 41
+
+```{r us5, include=FALSE, warning=FALSE, message=FALSE}
+
+boxplot(train_clean$saleprice, main="SalePrice")
+
+```
+
+Slide 42
+
+```{r us5, include=FALSE, warning=FALSE, message=FALSE}
+source("outliers_script.R")
+outlierKD(train_clean,saleprice)
+```
+
+Slide 43
+```{r us5, include=FALSE, warning=FALSE, message=FALSE}
+qnt <- quantile(train_clean$saleprice, probs=c(.25, .75), na.rm = T)
+
+H <- 1.5 * IQR(train_clean$saleprice, na.rm = T)
+
+atipicosraz<-ifelse(train_clean$saleprice > qnt[2]+H | train_clean$saleprice < qnt[1]-H ,1,0)
+
+ggplot(train_clean) + 
+  geom_boxplot(mapping=aes(x="", y=saleprice)) +
+  geom_hline(yintercept=qnt, color="red") + 
+  geom_hline(yintercept=qnt[2]+H, color="blue") +
+  geom_hline(yintercept=qnt[1]-H, color="blue") 
 
 ```
 
@@ -89,10 +127,293 @@ Let's analyze the relationthip between the features:
 + LotArea: Lot size in square feet
 
 ```{r mul1, include=FALSE, warning=FALSE, message=FALSE}
+
+# primer plot
+
 ggplot(train_clean) + 
   geom_point(mapping = aes(x=train_clean$grlivarea, y=train_clean$saleprice)) + 
   xlab("grlivarea") + 
   ylab("saleprice")
+
+# segundo plot
+
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$totalbsmtsf, y=train_clean$saleprice)) + 
+  xlab("totalbsmtsf") + 
+  ylab("saleprice")
+
+# segundo plot con linea
+
+plot(train_clean$totalbsmtsf, train_clean$saleprice,
+     xlab = "totalbsmtsf", ylab = "saleprice",
+     pch = 19, frame = FALSE)
+abline(lm(saleprice ~ totalbsmtsf, data = train_clean), col = "blue")
+
+# tercer plot con exponencial
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$totalbsmtsf, y=train_clean$saleprice)) + 
+  geom_smooth(mapping = aes(x=train_clean$totalbsmtsf, y=train_clean$saleprice)) + 
+  xlab("totalbsmtsf") + 
+  ylab("saleprice")
+
 ```
 
-## Test Assumptions
+
+## Relationship with categorical features
+
+```{r mul2, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_boxplot(mapping = aes(x=train_clean$overallqual, y=train_clean$saleprice, fill=train_clean$overallqual)) + 
+  xlab("overallqual") + 
+  ylab("saleprice")
+```
+
+```{r mul3, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_boxplot(mapping = aes(x=factor(train_clean$yearbuilt), y=train_clean$saleprice, fill=train_clean$yearbuilt)) +
+  xlab("yearbuilt") + 
+  ylab("saleprice")
+```
+
+## objective analysis
+
+slides 29-30
+```{r ob1, include=FALSE, warning=FALSE, message=FALSE}
+
+corr <- round(cor(dplyr::select_if(train_clean, is.numeric)), 1)
+
+head(corr[, 1:6])
+
+ggcorrplot(corr, hc.order = TRUE, type = "lower",
+   lab = TRUE)
+
+sort(corr[,'saleprice'] )
+
+```
+
+
+slide 49
+```{r ob2, include=FALSE, warning=FALSE, message=FALSE}
+columns_interested <- c('saleprice', 'grlivarea', 'garagecars', 'totalbsmtsf', 'fullbath')
+pairs(train_clean[,columns_interested])
+```
+
+
+slide 64
+```{r ob3, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$grlivarea, y=train_clean$saleprice)) + 
+  xlab("grlivarea") + 
+  ylab("saleprice") 
+
+# slide 65-67
+
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$grlivarea, y=train_clean$saleprice, color=train_clean$overallqual)) + 
+  xlab("grlivarea") + 
+  ylab("saleprice") 
+
+train_clean[train_clean$grlivarea >= 4500, ]
+
+
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=train_clean$grlivarea, y=train_clean$saleprice, color=train_clean$landcontour)) + 
+  xlab("grlivarea") + 
+  ylab("saleprice") 
+
+train_clean <- train_clean[train_clean$grlivarea < 4500, ]
+
+
+```
+
+probplot - probability plot
+Generates a probability plot for a specified theoretical distribution, i.e., basically a qqplot where the y-axis is labeled with probabilities instead of quantiles. The function is mainly intended for teaching the concept of quantile plots.
+
+```{r prob1, include=FALSE, warning=FALSE, message=FALSE}
+qqnorm(train_clean$saleprice)
+qqline(train_clean$saleprice)
+```
+
+
+slide 71
+```{r prob2, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(log(train_clean$saleprice), alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("precio de venta - transformación")
+
+qqnorm(log(train_clean$saleprice))
+qqline(log(train_clean$saleprice))
+
+train_clean$saleprice_log <- log(train_clean$saleprice)
+
+```
+
+slide 72
+```{r prob3, include=FALSE, warning=FALSE, message=FALSE}
+
+
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(train_clean$grlivarea, alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("grlivarea")
+
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(train_clean$totalbsmtsf, alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("totalbsmtsf")
+
+
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(log(train_clean$grlivarea), alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("grlivarea")
+
+
+
+qqnorm(log(train_clean$grlivarea))
+qqline(log(train_clean$grlivarea))
+
+train_clean$grlivarea_log <- log(train_clean$grlivarea)
+
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(train_clean$totalbsmtsf, alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("totalbsmtsf")
+
+# error ocasionado
+#qqnorm(log(train_clean$totalbsmtsf))
+#qqline(log(train_clean$totalbsmtsf))
+
+# slide 74
+
+# how many totalbsmts==0 the dataset has?
+prop.table(table(ifelse(train_clean$totalbsmtsf>0, TRUE, FALSE)))
+
+# let's analyze the data without 0
+segmented <- train_clean[train_clean$totalbsmtsf>0,]$totalbsmtsf
+
+ggplot() + 
+  geom_density(mapping = aes(log(segmented), alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("totalbsmtsf")
+qqnorm(log(segmented))
+qqline(log(segmented))
+
+segmented <- log(segmented)
+
+```
+
+slide 75
+```{r prob4, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean[train_clean$totalbsmtsf>0,]) + 
+  geom_point(mapping = aes(x=grlivarea_log, y=saleprice_log)) + 
+  xlab("grlivarea") + 
+  ylab("saleprice") 
+
+```
+slide 75
+```{r prob4, include=FALSE, warning=FALSE, message=FALSE}
+ggplot(train_clean[train_clean$totalbsmtsf>0,]) + 
+  geom_point(mapping = aes(x=segmented, y=saleprice_log)) + 
+  xlab("totalbsmtsf") + 
+  ylab("saleprice") 
+
+```
+
+slide 78
+```{r dumm, include=FALSE, warning=FALSE, message=FALSE}
+# dummy
+dummy_variables <- fastDummies::dummy_cols(train_clean$street)
+#names(dummy_variables)[1] <- "street"
+colnames(dummy_variables) <- c("street", "streetpave", "streetgrvl")
+# merge
+new_dataset <- merge(train_clean[,c('street','lotfrontage','utilities')],dummy_variables, by="street") 
+new_dataset
+```
+
+
+## new exploration
+
+### make new variables
+
+
+slide 78
+```{r exploreadd, include=FALSE, warning=FALSE, message=FALSE}
+# we can make another variable which includes the total area
+
+train_clean$totalsf <- train_clean$totalbsmtsf + train_clean$x1stflrsf + train_clean$x2ndflrsf
+ggplot(train_clean) + 
+  geom_histogram(mapping = aes(totalsf, alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("totalsf")
+
+ggplot(train_clean) + 
+  geom_density(mapping = aes(log(totalsf), alpha= 2, fill="red")) +
+  scale_x_continuous() +
+  theme(legend.position="none") + 
+  xlab("totalsf")
+
+qqnorm(log(train_clean$totalsf))
+qqline(log(train_clean$totalsf))
+
+train_clean$totalsflog <- log(train_clean$totalsf) 
+
+ggplot(train_clean) + 
+  geom_point(mapping = aes(x=totalsflog, y=saleprice_log)) + 
+  xlab("totalsf") + 
+  ylab("saleprice") 
+
+```
+
+```{r exploreadd, include=FALSE, warning=FALSE, message=FALSE}
+dummy_variables <- fastDummies::dummy_cols(train_clean$overallqual)
+#names(dummy_variables)[1] <- "overallqual"
+colnames(dummy_variables) <- c("overallqual", "ovqgood", "ovqaboveaverage", "ovqverygood", "ovqaverage", "ovqexcellent", "ovqbelowaverage", "ovqveryexcellent", "ovqfair", "ovqpoor")
+# merge
+
+new_dataset <- merge(train_clean[,c('overallqual','totalsflog','grlivarea_log', "saleprice_log")],dummy_variables, by="overallqual") 
+summary(new_dataset)
+```
+
+### training phase
+
+
+```{r traning, include=FALSE, warning=FALSE, message=FALSE}
+modelo_mpl<-lm(saleprice_log~ grlivarea_log+totalsflog+ovqgood+ovqaboveaverage+ovqverygood+ovqaverage+ovqexcellent+ovqbelowaverage+ovqveryexcellent+ovqfair,  data=new_dataset)
+summary(modelo_mpl)
+
+```
+
+### testing phase
+
+```{r testing, include=FALSE, warning=FALSE, message=FALSE}
+test <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase2/test.csv", stringsAsFactors=FALSE) 
+colnames(test)<- tolower(colnames(test))
+test$totalsf <- test$totalbsmtsf + test$x1stflrsf + test$x2ndflrsf
+test <- test[,c("id","grlivarea", "street", "totalsf", "overallqual")]
+test$grlivarea_log <- log(test$grlivarea)
+test$totalsflog <- log(test$totalsf)
+
+dummy_variables_test <- fastDummies::dummy_cols(test$overallqual)
+colnames(dummy_variables_test) <- c("overallqual", "ovqaverage", "ovqaboveaverage", "ovqverygood", "ovqgood", "ovqbelowaverage", "ovqexcellent", "ovqpoor", "ovqfair", "ovqveryexcellent", "ovqverypoor")
+# merge
+new_dataset_test <- cbind(test[,c('overallqual','totalsflog','grlivarea_log')], dummy_variables_test[,2:11])
+
+saleprice_pred <- predict(object=modelo_mpl,new_dataset_test[,c("grlivarea_log", "totalsflog", "ovqgood", "ovqaboveaverage", "ovqverygood", "ovqaverage", "ovqexcellent", "ovqbelowaverage", "ovqveryexcellent", "ovqfair")]) 
+
+test$prediction <- exp(saleprice_pred)
+
+names(test)[1]<-"Id"
+names(test)[8]<-"SalePrice"
+
+write.csv2(test[,c(1,8)], "test_1_housep.csv")
+
+```
