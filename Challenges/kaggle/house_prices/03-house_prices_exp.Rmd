@@ -397,8 +397,12 @@ summary(modelo_mpl)
 ```{r testing, include=FALSE, warning=FALSE, message=FALSE}
 test <-read.csv("D:/Usuarios/rhaps/OneDrive/Clases/2019-1/Analisis exploratorio/clase2/test.csv", stringsAsFactors=FALSE) 
 colnames(test)<- tolower(colnames(test))
+summary(test$totalbsmtsf)
+test[is.na(test$totalbsmtsf),]$totalbsmtsf <- 0
 test$totalsf <- test$totalbsmtsf + test$x1stflrsf + test$x2ndflrsf
 test <- test[,c("id","grlivarea", "street", "totalsf", "overallqual")]
+
+
 test$grlivarea_log <- log(test$grlivarea)
 test$totalsflog <- log(test$totalsf)
 
