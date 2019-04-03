@@ -12,8 +12,7 @@ def generate_parent(length, geneSet, get_fitness):
         genes=[]
         while len(genes) < length:
             sampleSize = min(length -  len(genes), len(geneSet))
-            genes.extend(random.sample(geneSet, sampleSize))
-        genes = ''.join(genes)
+            genes.extend(random.sample(geneSet, sampleSize))        
         fitness = get_fitness(genes)
         return Chromosome(genes, fitness)
     
