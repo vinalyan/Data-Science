@@ -1,0 +1,446 @@
+---
+title: "MetroCali"
+author: "Christian Urcuqui"
+date: "1 de abril de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Libraries
+
+```{r lib, message=FALSE, warning=FALSE}
+library(readxl)
+library(tidyverse)
+library(fastDummies)
+library(reshape2)
+library(lubridate)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+library(reticulate)
+```
+
+## Let's load the datasets
+
+```{r datasets, message=FALSE, warning=FALSE}
+Base_Datos_Accidentalidad <- read_excel("D:/datos metrocali/Base Datos Accidentalidad.xlsx")
+Base_Datos_Agresiones_a_Operador_y_Vandalismos <- read_excel("D:/datos metrocali/Base Datos Agresiones a Operador y Vandalismos.xlsx")
+Base_Datos_Felicitaciones_Usuarios <- read_excel("D:/datos metrocali/Base Datos Felicitaciones Usuarios.xlsx")
+Base_Datos_Horas_Conduccion <- read_excel("D:/datos metrocali/Base Datos Horas Conducción.xlsx")
+Base_Datos_Incumplimientos_Operacionales <- read_excel("D:/datos metrocali/Base Datos Incumplimientos Operacionales.xlsx")
+Base_Datos_Infracciones_Tra_nsito <- read_excel("D:/datos metrocali/Base Datos Infracciones Tránsito.xlsx")
+Base_Datos_Operadores <- read_excel("D:/datos metrocali/Base Datos Operadores.xlsm")
+Base_Datos_Quejas_Usuarios <- read_excel("D:/datos metrocali/Base Datos Quejas Usuarios.xlsx")
+Base_Datos_Regularidad2 <- read_excel("D:/datos metrocali/Base Datos Regularidad2.xlsx")
+
+
+```
+
+## Analysis
+
+```{r analysis, echo=FALSE}
+bd_clean <- Base_Datos_Regularidad2 
+
+bd_clean$OPERADOR <- as.factor(bd_clean$OPERADOR)
+bd_clean <- bd_clean[,c('AÑO', 'MES', 'OPERADOR', 'ESTADO')]
+names(bd_clean)[1]<- "ANO"
+NROW(bd_clean[!duplicated(bd_clean$OPERADOR),]) # total de operadores 
+bd_clean$MES <- as.character(bd_clean$MES)
+bd_clean$MES <- paste0("0", bd_clean$MES)
+bd_clean$MES <- ifelse(nchar(bd_clean$MES)>2, substr(bd_clean$MES, 2, 3), substr(bd_clean$MES, 1, 2)) 
+bd_clean$FECHA <- as.POSIXct(paste0(bd_clean$ANO,"-", bd_clean$MES, "-01"), format="%Y-%m-%d")
+bd_clean <- bd_clean[order(bd_clean$FECHA),]
+bd_clean$semester <- cbind(semester(bd_clean$FECHA))
+
+# estado operadores ultimo semestre
+operadores_ultimo_ses <- filter(bd_clean, year(bd_clean$FECHA)==2018 & bd_clean$semester==2)[,c(3,4)] 
+operadores_ultimo_ses <- operadores_ultimo_ses[!duplicated(operadores_ultimo_ses$OPERADOR),]
+operadores_ultimo_ses$ESTADO <- as.factor(operadores_ultimo_ses$ESTADO)
+levels(operadores_ultimo_ses$ESTADO)
+prop.table(table(operadores_ultimo_ses$ESTADO)) * 100
+
+# ¿cuantos de los activos en junio siguen estando en diciembre?
+
+opera_2018_2_6 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==6 & bd_clean$ESTADO=="Activo")[,c(3)]  
+opera_2018_2_7 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==7 & bd_clean$ESTADO=="Activo")[,c(3)] 
+opera_2018_2_8 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==8 & bd_clean$ESTADO=="Activo")[,c(3)]  
+opera_2018_2_9 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==9 & bd_clean$ESTADO=="Activo")[,c(3)] 
+opera_2018_2_10 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==10 & bd_clean$ESTADO=="Activo")[,c(3)]  
+opera_2018_2_11 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==11 & bd_clean$ESTADO=="Activo")[,c(3)] 
+opera_2018_2_12 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & month(bd_clean$FECHA)==12 & bd_clean$ESTADO=="Activo")[,c(3)]  
+
+NROW(opera_2018_2_6[!duplicated(opera_2018_2_6),]) #1633 junio
+
+
+fun.13 <- function(x.1, x.2, x.3, x.4, x.5, x.6, x.7){
+     x.1p <- do.call("paste", x.1)
+     x.2p <- do.call("paste", x.2)
+     x.3p <- do.call("paste", x.3)
+     x.4p <- do.call("paste", x.4)
+     x.5p <- do.call("paste", x.5)
+     x.6p <- do.call("paste", x.6)
+     x.7p <- do.call("paste", x.7)
+     x.1[x.1p %in% x.2p & x.1p %in% x.3p & x.1p %in% x.4p & x.1p %in% x.5p & x.1p %in% x.6p & x.1p %in% x.7p,]
+ }
+
+perma_activos_2018_jun_dic <- fun.13(opera_2018_2_6, opera_2018_2_7, opera_2018_2_8, opera_2018_2_9, opera_2018_2_10, opera_2018_2_11, opera_2018_2_12)
+
+NROW(perma_activos_2018_jun_dic[!duplicated(perma_activos_2018_jun_dic),]) # 1395 (0.85)
+
+## ------
+
+
+NROW(opera_2018_2_7[!duplicated(opera_2018_2_7),]) #1634 julio
+
+# permanecen activos
+
+perma_activos_2018_2 <- fun.12(opera_2018_2_7, opera_2018_2_8, opera_2018_2_9, opera_2018_2_10, opera_2018_2_11, opera_2018_2_12)
+NROW(perma_activos_2018_2[!duplicated(perma_activos_2018_2),]) # 1421
+
+
+
+# activos todo el periodo de tiempo
+activos_2018_2 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & bd_clean$semester==2 & bd_clean$ESTADO=="Activo")[,3] 
+activos_2018_1 <- filter(bd_clean, year(bd_clean$FECHA)==2018 & bd_clean$semester==1 & bd_clean$ESTADO=="Activo")[,3] 
+activos_2017_2 <- filter(bd_clean, year(bd_clean$FECHA)==2017 & bd_clean$semester==2 & bd_clean$ESTADO=="Activo")[,3] 
+activos_2017_1 <- filter(bd_clean, year(bd_clean$FECHA)==2017 & bd_clean$semester==1 & bd_clean$ESTADO=="Activo")[,3]  
+activos_2016_2 <- filter(bd_clean, year(bd_clean$FECHA)==2016 & bd_clean$semester==2 & bd_clean$ESTADO=="Activo")[,3]  
+activos_2016_1 <- filter(bd_clean, year(bd_clean$FECHA)==2016 & bd_clean$semester==1 & bd_clean$ESTADO=="Activo")[,3]  
+
+
+fun.12 <- function(x.1,x.2, x.3, x.4, x.5, x.6){
+     x.1p <- do.call("paste", x.1)
+     x.2p <- do.call("paste", x.2)
+     x.3p <- do.call("paste", x.3)
+     x.4p <- do.call("paste", x.4)
+     x.5p <- do.call("paste", x.5)
+     x.6p <- do.call("paste", x.6)
+     x.1[x.1p %in% x.2p & x.1p %in% x.3p & x.1p %in% x.4p & x.1p %in% x.5p & x.1p %in% x.6p,]
+ }
+ok <- fun.12(activos_2016_1, activos_2016_2, activos_2017_1, activos_2017_2, activos_2018_1, activos_2018_2)
+ok <- ok[!duplicated(ok),]
+
+```
+
+## analytics 2
+
+```{r analytics2, echo=FALSE}
+consolidado <- read_excel("D:/datos metrocali/ConsolidadoDesempeñoOperadores-PRE.xlsx")
+
+names(consolidado)[1]<- "ANO"
+NROW(consolidado[!duplicated(consolidado$OPERADOR),]) # total de operadores 
+consolidado$MES <- as.character(consolidado$MES)
+consolidado$MES <- paste0("0", consolidado$MES)
+consolidado$MES <- ifelse(nchar(consolidado$MES)>2, substr(consolidado$MES, 2, 3), substr(consolidado$MES, 1, 2)) 
+consolidado$FECHA <- as.POSIXct(paste0(consolidado$ANO,"-", consolidado$MES, "-01"), format="%Y-%m-%d")
+consolidado <- consolidado[order(consolidado$FECHA),]
+
+primer_periodo <- consolidado[consolidado$FECHA>=as.POSIXct("2017-10-01") & consolidado$FECHA< as.POSIXct("2018-01-01"),]
+primer_periodo[,c(1,2)] <- NULL
+
+primer_periodo <- filter(primer_periodo, primer_periodo$ESTADO %in% c("Activo", "REACTIVADO"))
+primer_periodo <- primer_periodo[!duplicated(primer_periodo$OPERADOR),]
+
+
+segundo_periodo <- consolidado[consolidado$FECHA>=as.POSIXct("2018-10-01") & consolidado$FECHA< as.POSIXct("2019-01-01"),]
+segundo_periodo[,c(1,2)] <- NULL
+
+table(segundo_periodo$ESTADO)
+
+operadores_cancelados_seg <- segundo_periodo[segundo_periodo$ESTADO == "CANCELADO",]$OPERADOR
+
+operadores_cancelados_con <- ifelse(!(primer_periodo$OPERADOR %in% operadores_cancelados_seg) & (primer_periodo$OPERADOR %in% segundo_periodo$OPERADOR), "STAY", "LEAVE")
+new_operadores <- primer_periodo
+new_operadores$ESTADO_FUTURO <- operadores_cancelados_con 
+table(new_operadores$ESTADO_FUTURO) # cuanto es la proporcion de este análisis
+prop.table(table(new_operadores$ESTADO_FUTURO))
+
+```
+
+
+## Training and Testing Phases 
+
+```{r trainTes, echo=FALSE}
+bd_clean_Regularidad <- Base_Datos_Regularidad2 
+
+bd_clean_Regularidad$OPERADOR <- as.factor(bd_clean_Regularidad$OPERADOR)
+bd_clean_Regularidad <- bd_clean_Regularidad[,c('AÑO', 'MES', 'OPERADOR', 'ESTADO')]
+
+bd_clean_Horarios <- Base_Datos_Horas_Conduccion
+
+bd_clean_Agresiones <- Base_Datos_Agresiones_a_Operador_y_Vandalismos
+
+bd_clean_Horarios$OPERADOR <- as.factor(bd_clean_Horarios$OPERADOR)
+
+# Merge de los datos
+new_data <- merge(bd_clean_Regularidad, bd_clean_Horarios, by=c("OPERADOR", "AÑO", "MES"))
+names(new_data)[2] <- "ANO"
+
+new_data <- new_data[order(c(new_data$ANO, new_data$MES)),]
+
+new_data$MES <- as.character(new_data$MES)
+new_data$MES <- paste0("0", new_data$MES)
+new_data$MES <- ifelse(nchar(new_data$MES)>2, substr(new_data$MES, 2, 3), substr(new_data$MES, 1, 2)) 
+new_data$FECHA <- as.POSIXct(paste0(new_data$ANO,"-", new_data$MES, "-01"), format="%Y-%m-%d")
+new_data <- new_data[order(new_data$FECHA),]
+new_data[,c(2:4)] = NULL
+
+new_data_clean <- na.omit(new_data)
+summary(new_data_clean)
+train <- new_data_clean[new_data_clean$FECHA>=as.POSIXct("2018-01-01") & new_data_clean$FECHA< as.POSIXct("2018-07-01"),]
+test <- new_data_clean[new_data_clean$FECHA>=as.POSIXct("2018-07-01") & new_data_clean$FECHA< max(new_data_clean$FECHA),]
+train$ESTADO.y
+
+
+summary(train)
+summary(test)
+
+library(ggplot2)
+ggplot(train) + 
+  geom_boxplot(mapping =  aes(x=as.factor(FECHA), y = Total))
+
+ggplot(train) + 
+  geom_point(mapping = aes(x=Pad, y = Total, color=ESTADO.y))
+
+ggplot(train) + 
+  geom_point(mapping = aes(x=Art, y = Total, color=ESTADO.y))
+
+
+
+supendidos <- Base_Datos_Regularidad2[Base_Datos_Regularidad2$ESTADO %in% "SUSPENDIDO",]
+
+menos_na <-sort(sapply(Base_Datos_Regularidad2, function(y) sum(length(which(!is.na(y))))),decreasing=TRUE)[c(1:20)]
+
+names(menos_na)
+
+analysis <- Base_Datos_Regularidad2[,c(names(menos_na))]
+
+colnames(Base_Datos_Regularidad2)
+
+ggplot(Base_Datos_Regularidad2) + 
+  geom_boxplot(mapping =  aes(x=ESTADO, y = E21)) +
+  geom_boxplot(mapping =  aes(x=ESTADO, y = P72))
+
+#ggplot(analysis) + 
+#  geom_boxplot(mapping =  aes(x=ESTADO, y = P72)) +
+
+
+```
+
+```{r trainTes2, echo=FALSE}
+train <- consolidado[consolidado$FECHA>=as.POSIXct("2017-10-01") & consolidado$FECHA< as.POSIXct("2018-01-01"),]
+train[,c(1,2)] <- NULL
+table(train$ESTADO)
+
+train[train$ESTADO=="Activo" | train$ESTADO=="REACTIVADO" | train$ESTADO=="SUSPENDIDO",]$ESTADO <- "STAY"
+train[train$ESTADO=="CANCELADO" ,]$ESTADO <-"LEAVE"
+table(train$ESTADO)
+
+
+train$COT <- as.factor(train$COT)
+train$ESTADO <- as.factor(train$ESTADO)
+
+sapply(train, FUN= function(x) sum(is.na(x)))
+
+train[,c("INFRACCIONES\r\nPOR PIRATERÍA","INFRACCIONES\r\nTRÁNSITO SITM-MIO", "FELICITACIONES\r\nUSUARIOS")] <- NULL
+
+sapply(train, FUN= function(x) sum(is.na(x)))
+
+summary(train)
+
+#X <- train[,-c(1,2,12)]
+#Y <- train[, 2]
+
+data_train <- train[,-c(1,12)]
+colnames(data_train)
+colnames(data_train) <- c("ESTADO", "COT", "TIPOLOGIA", "REPORTES_BITACORA" ,"REPORTES_GRAVES", "ACCIDENTABILIDAD","QUEJAS_USUARIOS", "QUEJAS_GRAVES", "REGULARIDAD", "HORAS_LABORADAS")
+colnames(data_train)
+summary(data_train)
+featurePlot(x=data_train[,c("REGULARIDAD", "HORAS_LABORADAS")], y=data_train$ESTADO, plot="pairs")  
+
+ggplot(data_train) +
+  geom_density(mapping = aes(log(data_train$REGULARIDAD), colour=data_train$ESTADO))
+
+ggplot(data_train) +
+  geom_density(mapping = aes(log(data_train$HORAS_LABORADAS), colour=data_train$ESTADO))
+
+ggplot(data_train) +
+  geom_boxplot(mapping = aes(x = data_train$ESTADO, y=data_train$HORAS_LABORADAS))
+
+
+ggplot(data_train) +
+  geom_boxplot(mapping = aes(x = data_train$ESTADO, y=data_train$REGULARIDAD))
+
+```
+
+
+
+```{r}
+set.seed(1234)
+inTrain <- createDataPartition(
+  y = data_train$ESTADO, # Estratificar la partición según la clase a aprender
+  p = .85,         # Porcentaje de los datos que se quedarán en el training set
+  list = FALSE)    # Que los resultados esten en una matriz y no en una lista
+
+str(inTrain)
+training <- data_train[ inTrain,] # training set
+testing  <- data_train[-inTrain,] # test set, no lo utilizaremos sino hasta el final del proceso
+
+dim(training) #15000 instancias de aprendizaje
+dim(testing)  #5000 instancias de testing
+table(testing$ESTADO)
+
+
+set.seed(54321)
+modelo <- train(ESTADO~., data = training, method = "rpart", tuneLength=10)
+modelo
+plot(modelo)
+
+# Se realizan predicciones con el método predict
+predicciones <- predict(modelo, newdata=testing) #type "raw" por defecto
+confusionMatrix(predicciones, testing$ESTADO)
+
+modelo$finalModel$variable.importance
+
+
+# Prediction con la otros datos
+
+test <- new_operadores
+test[,c("INFRACCIONES\r\nPOR PIRATERÍA","INFRACCIONES\r\nTRÁNSITO SITM-MIO", "FELICITACIONES\r\nUSUARIOS")] <- NULL
+test <- test[,-c(1,2,12)]
+colnames(test) <- c("COT", "TIPOLOGIA", "REPORTES_BITACORA" ,"REPORTES_GRAVES", "ACCIDENTABILIDAD","QUEJAS_USUARIOS", "QUEJAS_GRAVES", "REGULARIDAD", "HORAS_LABORADAS", "ESTADO")
+
+test$COT <- as.factor(test$COT)
+test$ESTADO <- as.factor(test$ESTADO)
+
+
+
+
+predicciones <- predict(modelo, newdata=test[,-10]) #type "raw" por defecto
+confusionMatrix(predicciones, test$ESTADO)
+
+
+# cross con solo una variable HORA 
+
+summary(data_train[,c(1,10)][2])
+
+set.seed(54321)
+trControlRepCv <- trainControl(method="cv", number=5)
+grid <- data.frame(cp=c(0, 0.0005, 0.001, 0.005, 0.01))
+modeloRepCv <- train(ESTADO~., data = data_train, method = "rpart",
+                        tuneGrid=grid,
+                     control=rpart.control(
+                       minsplit = 2,
+                       minbucket = 2
+                     ),
+                     trControl=trControlRepCv)
+modeloRepCv
+
+m = modeloRepCv$finalModel
+rpart.plot(m)
+
+predicciones <- predict(modeloRepCv, newdata=test[,-10]) #type "raw" por defecto
+confusionMatrix(predicciones, test$ESTADO)
+
+# Confusion Matrix and Statistics
+
+#           Reference
+# Prediction LEAVE STAY
+#      LEAVE     0    0
+#      STAY    363 1583
+#                                           
+#                Accuracy : 0.8135          
+#                  95% CI : (0.7954, 0.8305)
+#     No Information Rate : 0.8135          
+#     P-Value [Acc > NIR] : 0.514           
+#                                           
+#                   Kappa : 0               
+#  Mcnemar's Test P-Value : <2e-16          
+#                                           
+#             Sensitivity : 0.0000          
+#             Specificity : 1.0000          
+#          Pos Pred Value :    NaN          
+#          Neg Pred Value : 0.8135          
+#              Prevalence : 0.1865          
+#          Detection Rate : 0.0000          
+#    Detection Prevalence : 0.0000          
+#       Balanced Accuracy : 0.5000          
+#                                           
+#        'Positive' Class : LEAVE  
+
+
+# cross con todas las variables 
+
+set.seed(54321)
+trControlRepCv <- trainControl(method="repeatedcv", number=5, repeats=5)
+grid <- data.frame(cp=c(0.002,0.004,0.005,0.006,0.007,0.008,0.009,0.012))
+modeloRepCv <- train(ESTADO~., data = data_train, method = "rpart",
+                        tuneGrid=grid,
+                        trControl=trControlRepCv)
+modeloRepCv
+
+predicciones <- predict(modeloRepCv, newdata=test[,-10], type="prob") #type "raw" por defecto
+predicciones <- predict(modeloRepCv, newdata=test[,-10], type="raw") #type "raw" por defecto
+confusionMatrix(predicciones, test$ESTADO)
+# Confusion Matrix and Statistics
+# 
+#           Reference
+# Prediction LEAVE STAY
+#      LEAVE     0    0
+#      STAY    363 1583
+#                                           
+#                Accuracy : 0.8135          
+#                  95% CI : (0.7954, 0.8305)
+#     No Information Rate : 0.8135          
+#     P-Value [Acc > NIR] : 0.514           
+#                                           
+#                   Kappa : 0               
+#  Mcnemar's Test P-Value : <2e-16          
+#                                           
+#             Sensitivity : 0.0000          
+#             Specificity : 1.0000          
+#          Pos Pred Value :    NaN          
+#          Neg Pred Value : 0.8135          
+#              Prevalence : 0.1865          
+#          Detection Rate : 0.0000          
+#    Detection Prevalence : 0.0000          
+#       Balanced Accuracy : 0.5000          
+#                                           
+#        'Positive' Class : LEAVE           
+#                                    
+
+
+```
+
+
+```{r}
+
+ggplot(test) +
+  geom_density(mapping = aes(test$REGULARIDAD, colour=test$ESTADO))
+
+ggplot(test) +
+  geom_density(mapping = aes(test$HORAS_LABORADAS, colour=test$ESTADO))
+
+ggplot(test) +
+  geom_boxplot(mapping = aes(x = test$ESTADO, y=test$HORAS_LABORADAS))
+
+
+ggplot(test) +
+  geom_boxplot(mapping = aes(x = test$ESTADO, y=test$REGULARIDAD))
+
+
+```
+
+
+Python analytics
+```{python}
+from sklearn import tree, metrics
+from sklearn.model_selection import train_test_split
+
+
+```
