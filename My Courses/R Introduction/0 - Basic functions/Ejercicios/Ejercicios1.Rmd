@@ -1,0 +1,47 @@
+---
+title: Ejercicios 1
+author: Christian Urcuqui
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    theme: yeti
+---
+
+# Ejercicios Unidad 1 {.tabset .tabset-pills}
+
+En el presente notebook se proponen un conjunto de ejercicios con el fin de evaluar los conocimientos adquiridos en las siguientes unidades:
+
++ El lenguaje de programacion R y GitHub
+  + Aplicar los conceptos basicos de codificacion en R.
+  + Explorar un data.frame en R
+
+## Ejercicio 1
+
+Imprima un "hello world" en la consola de R
+
+```{r uni1_1}
+print("hello world")
+```
+
+## Ejercicio 2
+
+Cree objeto tipo "character" con el nombre *variable* y asígnele el valor "hello world"
+
+```{r uni1_2}
+variable <- "hello world"
+```
+
+## Ejercicio 3
+
+Obtenga e imprima el tipo del objeto *variable*
+
+```{r uni1_4}
+typeof(variable)
+```
+
+
+
+# Ejercicios Unidad 2
