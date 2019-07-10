@@ -1,5 +1,5 @@
 ---
-title: Ejercicios 1
+title: Introduccion - Ejercicios 1
 author: Christian Urcuqui
 date: "`r Sys.Date()`"
 output:
@@ -10,13 +10,16 @@ output:
     theme: yeti
 ---
 
-# Ejercicios Unidad 1 {.tabset .tabset-pills}
+__Ejercicios unidad 1__
 
 En el presente notebook se proponen un conjunto de ejercicios con el fin de evaluar los conocimientos adquiridos en las siguientes unidades:
 
 + El lenguaje de programacion R y GitHub
   + Aplicar los conceptos basicos de codificacion en R.
   + Explorar un data.frame en R
+
+# Complejidad 1 {.tabset .tabset-pills}
+
 
 ## Ejercicio 1
 
@@ -28,7 +31,7 @@ print("hello world")
 
 ## Ejercicio 2
 
-Cree objeto tipo "character" con el nombre *variable* y as�gnele el valor "hello world"
+Cree objeto tipo "character" con el nombre *variable* y as?gnele el valor "hello world"
 
 ```{r uni1_2}
 variable <- "hello world"
@@ -36,12 +39,173 @@ variable <- "hello world"
 
 ## Ejercicio 3
 
-Obtenga e imprima el tipo del objeto *variable*
+Imprima el tipo del objeto *variable* creado previamente.
 
-```{r uni1_4}
+```{r uni1_3}
 typeof(variable)
 ```
 
+## Ejercicio 4
+
+Cree un vector de números enteros del 1 al 20
+
+```{r uni1_4}
+vector <- c(1:20)
+```
+
+## Ejercicio 5
+
+Cree un vector de números enteros del 1 al 10000 con saltos de 5
+
+```{r uni1_5}
+vector <- seq(from = 1, to=10000, by=5)
+```
+
+## Ejercicio 6
+
+Cree una función que permita imprimir los números impares de un vector de números enteros
 
 
-# Ejercicios Unidad 2
+```{r uni1_6}
+impar_function <- function(vector)
+{
+  for(number in vector)
+  {
+    if(number%%2!=0)
+    {
+      print(number)
+    }
+  }
+}
+impar_function(vector)
+
+```
+
+## Ejercicio 7
+
+Cree un array de dimensiones 3x3x2 que tenga un vector integrado por los siguientes vectores
+|
+```
+vector1 <- c(5,9,3)
+vector2 <- c(10,11,12,13,14,15)
+```
+
+```{r uni1_7}
+vector1 <- c(5,9,3)
+vector2 <- c(10,11,12,13,14,15)
+array(c(vector1,vector2), dim=c(3,3,2))
+
+```
+
+
+## Ejercicio 8
+
+Cargue en un objeto dataframe el archivo csv que se encuentra en el siguiente enlace:
+
+```
+https://raw.githubusercontent.com/urcuqui/Ciencia-de-datos-ICESI/master/posgrado/datasets/titanic/train_titanic.csv
+
+```
+
+```
+https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv
+
+```
+
+```{r uni1_8}
+titanic_dataset <- read.csv(file.choose())
+```
+
+# Complejidad 2 {.tabset .tabset-pills}
+
+Este es el diccionario de de variables del dataset de titanic 
+
+|Variable| Definition | Key
+|:-:|:-:|:-:|---|---|
+| Survival  | Survival | 0 = No, 1 = Yes  |   |   |
+| pclass  |  	Ticket class |  1 = 1st, 2 = 2nd, 3 = 3rd |   |   |
+| sex  |  Sex | 	Age in years  |   |   |
+| Age  | Age in years	  |   |   |   |
+| sibsp  | # of siblings / spouses aboard the Titanic	  |   |   |   |
+| parch  | # of parents / children aboard the Titanic |   |   |   |
+| ticket  | Ticket number  |   |   |   |
+| fare  | Passenger fare  |   |   |   |
+| cabin  | Cabin number  |   |   |   |
+| embarked  | Port of Embarkation  |  C = Cherbourg, Q = Queenstown, S = Southampton |   |   |
+
+*Tipos de variables*
+
++ Variables cuantitativas, sus valores son numéricos y pueden ser contados o
+medidos, por ejemplo, ventas netas de una compañía.
+  + Variables discretas, es una variable numérica que usualmente se obtiene a través del conteo y solamente puede tomar valores específicos de un conjunto, por ejemplo, el número de personas en una ciudad o el número de quejas de los clientes.
+  + Variables continuas, son variables numéricas que pueden tomar un valor (infinito/decimal) entre dos valores numéricos cualquiera. Usualmente, esta variable se obtiene a partir de mediciones, por ejemplo, la temperatura de un paciente.
++ Variables cualitativas, conocidos también como variables categóricas, sus
+valores pueden ser contados pero no medidos.
+  + Variables nominales, son valores que presentan a una categoría y no cuentan con un orden. Estos valores pueden ser contados pero no pueden ser ni medidos y ni ordenados, por ejemplo, género de música y categorías de productos.
+  + Variables ordinales, son valores numéricos que pueden ser discretos o continuos y que están ya sea ordenadas o jerarquizadas.
+  + Variables binarias, sus valores hacen parte únicamente a dos categorías que generalmente son opuestos, por ejemplo, 1/0 y verdadero/falso
+
+  
+## Ejercicio 1
+
+Clasifique cada una de las variables según su tipo:
+```
+Survival:
+pclass:
+sex:
+Age:
+sibsp:
+parch:
+ticket:
+fare:
+cabin:
+embarked:
+```
+## Ejercicio 2
+
+Cargue el paquete dplyr (si es necesario intalelo)
+
+```{r lib, message=FALSE}
+library(dplyr)
+```
+
+## Ejercicio 3
+
+¿Cuánto es la media de la edad de personas que no sobrevivieron?
+
+```{r uni2_2, message=FALSE}
+mean(titanic_dataset[titanic_dataset$Survived == 0,]$Age)
+#mean(filter(titanic_dataset, Survived==0)$Age)
+```
+## Ejercicio 4
+
+Cálcule el registro de la tárifa más alta (passenger fare) del conjunto de hombres con más de dos hijos (parch - children aboard)
+
+```{r uni3_2}
+max(filter(titanic_dataset, Sex == "male" & Parents.Children.Aboard > 2)$Fare)
+```
+
+## Ejercicio 5
+
+Transforme (si es necesario) las siguientes variables del dataframe a categóricas:
+
++ Survived / Survival
++ Sex
++ Pclass
+
+**Los nombres no son categoricos**
+
+```{r uni4_2}
+titanic_dataset$Survived <- as.factor(titanic_dataset$Survived)
+titanic_dataset$Pclass <- as.factor(titanic_dataset$Pclass)
+```
+
+## Ejercicio 6
+
+A partir de los datos responda la siguiente pregunta, ¿cuál es la probabilidad de no sobrevivir al ser hombre?
+
+**Ayuda: tabulación cruzada**
+
+```{r uni5_2}
+prop.table(table(titanic_dataset[,c(1,4)]))
+```
