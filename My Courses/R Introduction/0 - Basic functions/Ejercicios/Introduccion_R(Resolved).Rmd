@@ -512,7 +512,7 @@ detach(mtcars)
 ```
 Este enfoque tiene limitaciones cuando los objetos almacenados en memoria tienen el mismo nombre. 
 
-```{r attachExample3}
+```{r attachExample3, error=TRUE}
 mpg <- c(25, 36, 47)
 attach(mtcars)
   plot(mpg, wt)
@@ -536,7 +536,7 @@ with(mtcars, {
 
 La limitación con with es que cualquier objeto creado o asignado solo tendrá representación dentro de él. 
 
-```{r attachExample5}
+```{r attachExample5, error=TRUE}
 with(mtcars, {
   stats <- summary(mpg)
   stats
@@ -545,7 +545,7 @@ stats
  
 ```
 Si es necesario crear o asignar a un objeto dentro de este debemos utilizar el operador <<-
-```{r attachExample6}
+```{r attachExample6, error=TRUE}
 with(mtcars, {
   nokeepstats <- summary(mpg)
   keepstats <<- summary(mpg)
@@ -688,7 +688,7 @@ Para el siguiente ejercicio cargue el archivo "parks.csv" y asignelo a una varia
 
 _Ejercicio 14_
 
-```{R example1}
+```{R Exercise24}
 # Escriba en el siguiente espacio el código que permita cargar el archivo parks.csv (1 línea de código)
 df <- read.csv(file.choose())
 # --------------------------- #
@@ -718,6 +718,10 @@ workbook <- "D:/Usuarios/rhaps/Downloads/variables proyecto TMRC.xlsx" # direcci
 mydataframe <- read.xlsx(workbook, 1)
 View(mydataframe)
 ```
+
+## Material sobre chunks
+
+https://yihui.name/knitr/options/
 
 
 ##Referencias
