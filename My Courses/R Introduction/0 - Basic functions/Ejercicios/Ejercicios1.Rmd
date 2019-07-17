@@ -83,8 +83,7 @@ impar_function(vector)
 
 ## Ejercicio 7
 
-Cree un array de dimensiones 3x3x2 que tenga un vector integrado por los siguientes vectores
-|
+Cree un array de 3x3x2 que tenga los valores de un vector integrado por los siguientes objetos|
 ```
 vector1 <- c(5,9,3)
 vector2 <- c(10,11,12,13,14,15)
@@ -103,17 +102,13 @@ array(c(vector1,vector2), dim=c(3,3,2))
 Cargue en un objeto dataframe el archivo csv que se encuentra en el siguiente enlace:
 
 ```
-https://raw.githubusercontent.com/urcuqui/Ciencia-de-datos-ICESI/master/posgrado/datasets/titanic/train_titanic.csv
-
-```
-
-```
 https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv
 
 ```
 
 ```{r uni1_8}
 titanic_dataset <- read.csv(file.choose())
+
 ```
 
 # Complejidad 2 {.tabset .tabset-pills}
@@ -148,7 +143,7 @@ valores pueden ser contados pero no medidos.
   
 ## Ejercicio 1
 
-Clasifique cada una de las variables según su tipo:
+Clasifique las variables según su tipo (solo los datos del dataset que cargo):
 ```
 Survival:
 pclass:
@@ -163,7 +158,7 @@ embarked:
 ```
 ## Ejercicio 2
 
-Cargue el paquete dplyr (si es necesario intalelo)
+Cargue el paquete dplyr (si es necesario instalelo)
 
 ```{r lib, message=FALSE}
 library(dplyr)
@@ -208,4 +203,21 @@ A partir de los datos responda la siguiente pregunta, ¿cuál es la probabilidad
 
 ```{r uni5_2}
 prop.table(table(titanic_dataset[,c(1,4)]))
+```
+
+
+## Reto (adicional)
+
+
+Cargue el dataset de este enlace y realice el proceso necesario para eliminar los registros NA de cada una de las variables 
+
+```
+https://raw.githubusercontent.com/urcuqui/Ciencia-de-datos-ICESI/master/posgrado/datasets/titanic/train_titanic.csv
+```
+
+**LIMPIEZA**
+
+```{r limpieza, message=FALSE}
+summary(titanic_dataset)
+summary(titanic_dataset[!is.na(titanic_dataset$Age),])
 ```
