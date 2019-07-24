@@ -294,7 +294,7 @@ Utilice difftime y calcule el tiempo transcurrido desde su nacimiento hasta hoy 
 ```{r exercise4}
 today <- Sys.Date()
 dob <- as.Date("1989-01-03")
-difftime(today, dob)
+difftime(today, dob, units="weeks")
 ```
 
 __Ejemplo 13__
